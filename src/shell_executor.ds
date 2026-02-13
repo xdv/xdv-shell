@@ -1,0 +1,87 @@
+// Shell Executor - Command Execution
+
+forge ShellExecutorErrors {
+    const ERR_OK: UInt32 = 0;
+    const ERR_NOT_FOUND: UInt32 = 1;
+    const ERR_PERMISSION: UInt32 = 2;
+    const ERR_EXEC_FAILED: UInt32 = 3;
+    const ERR_INVALID_ARGS: UInt32 = 4;
+    const ERR_DOMAIN_NOT_AVAILABLE: UInt32 = 100;
+}
+
+forge ShellExecutor {
+    
+    const MAX_BUILTINS: UInt32 = 16;
+    
+    proc K::execute(cmd: UInt64, args: UInt64) -> UInt32 {
+        return 0;
+    }
+    
+    proc K::lookup_command(name: UInt64) -> UInt64 {
+        return 0;
+    }
+    
+    proc K::register_builtin(name: UInt64, func: UInt64) -> UInt32 {
+        return 0;
+    }
+    
+    proc K::run_builtin(cmd: UInt64, args: UInt64) -> UInt32 {
+        return 0;
+    }
+    
+    proc K::spawn_process(cmd: UInt64, args: UInt64, stdin: UInt64, stdout: UInt64) -> UInt32 {
+        return 0;
+    }
+    
+    proc K::wait_for_child(pid: UInt32) -> UInt32 {
+        return 0;
+    }
+    
+    proc Q::execute(cmd: UInt64, args: UInt64) -> UInt32 {
+        return 100;
+    }
+    
+    proc Q::lookup_command(name: UInt64) -> UInt64 {
+        return 0;
+    }
+    
+    proc Q::register_builtin(name: UInt64, func: UInt64) -> UInt32 {
+        return 100;
+    }
+    
+    proc Q::run_builtin(cmd: UInt64, args: UInt64) -> UInt32 {
+        return 100;
+    }
+    
+    proc Q::spawn_process(cmd: UInt64, args: UInt64, stdin: UInt64, stdout: UInt64) -> UInt32 {
+        return 100;
+    }
+    
+    proc Q::wait_for_child(pid: UInt32) -> UInt32 {
+        return 100;
+    }
+    
+    proc Phi::execute(cmd: UInt64, args: UInt64) -> UInt32 {
+        return 100;
+    }
+    
+    proc Phi::lookup_command(name: UInt64) -> UInt64 {
+        return 0;
+    }
+    
+    proc Phi::register_builtin(name: UInt64, func: UInt64) -> UInt32 {
+        return 100;
+    }
+    
+    proc Phi::run_builtin(cmd: UInt64, args: UInt64) -> UInt32 {
+        return 100;
+    }
+    
+    proc Phi::spawn_process(cmd: UInt64, args: UInt64, stdin: UInt64, stdout: UInt64) -> UInt32 {
+        return 100;
+    }
+    
+    proc Phi::wait_for_child(pid: UInt32) -> UInt32 {
+        return 100;
+    }
+}

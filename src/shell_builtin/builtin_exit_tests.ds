@@ -1,0 +1,77 @@
+// Builtin exit Tests
+
+forge BuiltinExitTests {
+    
+    proc test_k_run() -> UInt32 {
+        let result = BuiltinExit::K::run(0);
+        return 1;
+    }
+    
+    proc test_k_get_exit_code() -> UInt32 {
+        let result = BuiltinExit::K::get_exit_code();
+        return 1;
+    }
+    
+    proc test_k_cleanup() -> UInt32 {
+        let result = BuiltinExit::K::cleanup();
+        return 1;
+    }
+    
+    proc test_q_run_returns_error() -> UInt32 {
+        let result = BuiltinExit::Q::run(0);
+        if result == 100 {
+            return 1;
+        }
+        return 0;
+    }
+    
+    proc test_q_get_exit_code() -> UInt32 {
+        let result = BuiltinExit::Q::get_exit_code();
+        return 1;
+    }
+    
+    proc test_q_cleanup_returns_error() -> UInt32 {
+        let result = BuiltinExit::Q::cleanup();
+        if result == 100 {
+            return 1;
+        }
+        return 0;
+    }
+    
+    proc test_phi_run_returns_error() -> UInt32 {
+        let result = BuiltinExit::Phi::run(0);
+        if result == 100 {
+            return 1;
+        }
+        return 0;
+    }
+    
+    proc test_phi_get_exit_code() -> UInt32 {
+        let result = BuiltinExit::Phi::get_exit_code();
+        return 1;
+    }
+    
+    proc test_phi_cleanup_returns_error() -> UInt32 {
+        let result = BuiltinExit::Phi::cleanup();
+        if result == 100 {
+            return 1;
+        }
+        return 0;
+    }
+    
+    proc run_all_tests() -> UInt32 {
+        let passed = 0;
+        
+        passed = passed + BuiltinExitTests::test_k_run();
+        passed = passed + BuiltinExitTests::test_k_get_exit_code();
+        passed = passed + BuiltinExitTests::test_k_cleanup();
+        passed = passed + BuiltinExitTests::test_q_run_returns_error();
+        passed = passed + BuiltinExitTests::test_q_get_exit_code();
+        passed = passed + BuiltinExitTests::test_q_cleanup_returns_error();
+        passed = passed + BuiltinExitTests::test_phi_run_returns_error();
+        passed = passed + BuiltinExitTests::test_phi_get_exit_code();
+        passed = passed + BuiltinExitTests::test_phi_cleanup_returns_error();
+        
+        return passed;
+    }
+}

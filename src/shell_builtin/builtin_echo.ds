@@ -1,0 +1,49 @@
+// Builtin echo - Print Text
+
+forge BuiltinEchoErrors {
+    const ERR_OK: UInt32 = 0;
+    const ERR_INVALID_ARGS: UInt32 = 1;
+    const ERR_DOMAIN_NOT_AVAILABLE: UInt32 = 100;
+}
+
+forge BuiltinEcho {
+    
+    const FLAG_NEWLINE: UInt32 = 1;
+    const FLAG_ESCAPE: UInt32 = 2;
+    
+    proc K::run(args: UInt64, count: UInt32, flags: UInt32) -> UInt32 {
+        return 0;
+    }
+    
+    proc K::print_args(args: UInt64, count: UInt32) -> UInt32 {
+        return 0;
+    }
+    
+    proc K::expand_vars(input: UInt64) -> UInt64 {
+        return 0;
+    }
+    
+    proc Q::run(args: UInt64, count: UInt32, flags: UInt32) -> UInt32 {
+        return 100;
+    }
+    
+    proc Q::print_args(args: UInt64, count: UInt32) -> UInt32 {
+        return 100;
+    }
+    
+    proc Q::expand_vars(input: UInt64) -> UInt64 {
+        return 0;
+    }
+    
+    proc Phi::run(args: UInt64, count: UInt32, flags: UInt32) -> UInt32 {
+        return 100;
+    }
+    
+    proc Phi::print_args(args: UInt64, count: UInt32) -> UInt32 {
+        return 100;
+    }
+    
+    proc Phi::expand_vars(input: UInt64) -> UInt64 {
+        return 0;
+    }
+}

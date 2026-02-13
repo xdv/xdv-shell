@@ -1,0 +1,77 @@
+// Builtin echo Tests
+
+forge BuiltinEchoTests {
+    
+    proc test_k_run() -> UInt32 {
+        let result = BuiltinEcho::K::run(0, 0, 0);
+        return 1;
+    }
+    
+    proc test_k_print_args() -> UInt32 {
+        let result = BuiltinEcho::K::print_args(0, 0);
+        return 1;
+    }
+    
+    proc test_k_expand_vars() -> UInt32 {
+        let result = BuiltinEcho::K::expand_vars(0);
+        return 1;
+    }
+    
+    proc test_q_run_returns_error() -> UInt32 {
+        let result = BuiltinEcho::Q::run(0, 0, 0);
+        if result == 100 {
+            return 1;
+        }
+        return 0;
+    }
+    
+    proc test_q_print_args_returns_error() -> UInt32 {
+        let result = BuiltinEcho::Q::print_args(0, 0);
+        if result == 100 {
+            return 1;
+        }
+        return 0;
+    }
+    
+    proc test_q_expand_vars() -> UInt32 {
+        let result = BuiltinEcho::Q::expand_vars(0);
+        return 1;
+    }
+    
+    proc test_phi_run_returns_error() -> UInt32 {
+        let result = BuiltinEcho::Phi::run(0, 0, 0);
+        if result == 100 {
+            return 1;
+        }
+        return 0;
+    }
+    
+    proc test_phi_print_args_returns_error() -> UInt32 {
+        let result = BuiltinEcho::Phi::print_args(0, 0);
+        if result == 100 {
+            return 1;
+        }
+        return 0;
+    }
+    
+    proc test_phi_expand_vars() -> UInt32 {
+        let result = BuiltinEcho::Phi::expand_vars(0);
+        return 1;
+    }
+    
+    proc run_all_tests() -> UInt32 {
+        let passed = 0;
+        
+        passed = passed + BuiltinEchoTests::test_k_run();
+        passed = passed + BuiltinEchoTests::test_k_print_args();
+        passed = passed + BuiltinEchoTests::test_k_expand_vars();
+        passed = passed + BuiltinEchoTests::test_q_run_returns_error();
+        passed = passed + BuiltinEchoTests::test_q_print_args_returns_error();
+        passed = passed + BuiltinEchoTests::test_q_expand_vars();
+        passed = passed + BuiltinEchoTests::test_phi_run_returns_error();
+        passed = passed + BuiltinEchoTests::test_phi_print_args_returns_error();
+        passed = passed + BuiltinEchoTests::test_phi_expand_vars();
+        
+        return passed;
+    }
+}

@@ -1,0 +1,59 @@
+// Builtin mkdir Tests
+
+forge BuiltinMkdirTests {
+    
+    proc test_k_run() -> UInt32 {
+        let result = BuiltinMkdir::K::run(0, 0, 0);
+        return 1;
+    }
+    
+    proc test_k_create_directory() -> UInt32 {
+        let result = BuiltinMkdir::K::create_directory(0, 0);
+        return 1;
+    }
+    
+    proc test_q_run_returns_error() -> UInt32 {
+        let result = BuiltinMkdir::Q::run(0, 0, 0);
+        if result == 100 {
+            return 1;
+        }
+        return 0;
+    }
+    
+    proc test_q_create_directory_returns_error() -> UInt32 {
+        let result = BuiltinMkdir::Q::create_directory(0, 0);
+        if result == 100 {
+            return 1;
+        }
+        return 0;
+    }
+    
+    proc test_phi_run_returns_error() -> UInt32 {
+        let result = BuiltinMkdir::Phi::run(0, 0, 0);
+        if result == 100 {
+            return 1;
+        }
+        return 0;
+    }
+    
+    proc test_phi_create_directory_returns_error() -> UInt32 {
+        let result = BuiltinMkdir::Phi::create_directory(0, 0);
+        if result == 100 {
+            return 1;
+        }
+        return 0;
+    }
+    
+    proc run_all_tests() -> UInt32 {
+        let passed = 0;
+        
+        passed = passed + BuiltinMkdirTests::test_k_run();
+        passed = passed + BuiltinMkdirTests::test_k_create_directory();
+        passed = passed + BuiltinMkdirTests::test_q_run_returns_error();
+        passed = passed + BuiltinMkdirTests::test_q_create_directory_returns_error();
+        passed = passed + BuiltinMkdirTests::test_phi_run_returns_error();
+        passed = passed + BuiltinMkdirTests::test_phi_create_directory_returns_error();
+        
+        return passed;
+    }
+}

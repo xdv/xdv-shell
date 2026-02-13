@@ -1,0 +1,62 @@
+// Shell Main - Entry Point
+
+forge ShellMainErrors {
+    const ERR_OK: UInt32 = 0;
+    const ERR_INIT_FAILED: UInt32 = 1;
+    const ERR_LOOP_FAILED: UInt32 = 2;
+    const ERR_DOMAIN_NOT_AVAILABLE: UInt32 = 100;
+}
+
+forge ShellMain {
+    
+    const VERSION_MAJOR: UInt8 = 0;
+    const VERSION_MINOR: UInt8 = 2;
+    
+    proc K::main() -> UInt32 {
+        return 0;
+    }
+    
+    proc K::init() -> UInt32 {
+        return 0;
+    }
+    
+    proc K::print_banner() -> UInt32 {
+        return 0;
+    }
+    
+    proc K::run() -> UInt32 {
+        return 0;
+    }
+    
+    proc Q::main() -> UInt32 {
+        return 100;
+    }
+    
+    proc Q::init() -> UInt32 {
+        return 100;
+    }
+    
+    proc Q::print_banner() -> UInt32 {
+        return 100;
+    }
+    
+    proc Q::run() -> UInt32 {
+        return 100;
+    }
+    
+    proc Phi::main() -> UInt32 {
+        return 100;
+    }
+    
+    proc Phi::init() -> UInt32 {
+        return 100;
+    }
+    
+    proc Phi::print_banner() -> UInt32 {
+        return 100;
+    }
+    
+    proc Phi::run() -> UInt32 {
+        return 100;
+    }
+}

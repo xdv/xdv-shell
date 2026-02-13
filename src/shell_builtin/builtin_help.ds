@@ -1,0 +1,58 @@
+// Builtin help - Show Help
+
+forge BuiltinHelpErrors {
+    const ERR_OK: UInt32 = 0;
+    const ERR_NOT_FOUND: UInt32 = 1;
+    const ERR_DOMAIN_NOT_AVAILABLE: UInt32 = 100;
+}
+
+forge BuiltinHelp {
+    
+    proc K::run(topic: UInt64) -> UInt32 {
+        return 0;
+    }
+    
+    proc K::print_commands() -> UInt32 {
+        return 0;
+    }
+    
+    proc K::print_usage(cmd: UInt64) -> UInt32 {
+        return 0;
+    }
+    
+    proc K::get_command_count() -> UInt32 {
+        return 0;
+    }
+    
+    proc Q::run(topic: UInt64) -> UInt32 {
+        return 100;
+    }
+    
+    proc Q::print_commands() -> UInt32 {
+        return 100;
+    }
+    
+    proc Q::print_usage(cmd: UInt64) -> UInt32 {
+        return 100;
+    }
+    
+    proc Q::get_command_count() -> UInt32 {
+        return 0;
+    }
+    
+    proc Phi::run(topic: UInt64) -> UInt32 {
+        return 100;
+    }
+    
+    proc Phi::print_commands() -> UInt32 {
+        return 100;
+    }
+    
+    proc Phi::print_usage(cmd: UInt64) -> UInt32 {
+        return 100;
+    }
+    
+    proc Phi::get_command_count() -> UInt32 {
+        return 0;
+    }
+}

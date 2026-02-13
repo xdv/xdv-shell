@@ -1,0 +1,53 @@
+// Builtin ls - List Directory
+
+forge BuiltinLsErrors {
+    const ERR_OK: UInt32 = 0;
+    const ERR_NOT_FOUND: UInt32 = 1;
+    const ERR_NOT_DIRECTORY: UInt32 = 2;
+    const ERR_PERMISSION: UInt32 = 3;
+    const ERR_READ_FAILED: UInt32 = 4;
+    const ERR_DOMAIN_NOT_AVAILABLE: UInt32 = 100;
+}
+
+forge BuiltinLs {
+    
+    const FLAG_ALL: UInt32 = 1;
+    const FLAG_LONG: UInt32 = 2;
+    const FLAG_RECURSIVE: UInt32 = 4;
+    
+    proc K::run(path: UInt64, flags: UInt32) -> UInt32 {
+        return 0;
+    }
+    
+    proc K::list_entries(dir: UInt64) -> UInt32 {
+        return 0;
+    }
+    
+    proc K::print_entry(name: UInt64, is_dir: UInt32) -> UInt32 {
+        return 0;
+    }
+    
+    proc Q::run(path: UInt64, flags: UInt32) -> UInt32 {
+        return 100;
+    }
+    
+    proc Q::list_entries(dir: UInt64) -> UInt32 {
+        return 100;
+    }
+    
+    proc Q::print_entry(name: UInt64, is_dir: UInt32) -> UInt32 {
+        return 100;
+    }
+    
+    proc Phi::run(path: UInt64, flags: UInt32) -> UInt32 {
+        return 100;
+    }
+    
+    proc Phi::list_entries(dir: UInt64) -> UInt32 {
+        return 100;
+    }
+    
+    proc Phi::print_entry(name: UInt64, is_dir: UInt32) -> UInt32 {
+        return 100;
+    }
+}

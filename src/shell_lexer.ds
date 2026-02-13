@@ -1,0 +1,94 @@
+// Shell Lexer - Tokenizer
+
+forge ShellLexerErrors {
+    const ERR_OK: UInt32 = 0;
+    const ERR_INVALID_TOKEN: UInt32 = 1;
+    const ERR_EOF: UInt32 = 2;
+    const ERR_TOO_LONG: UInt32 = 3;
+    const ERR_DOMAIN_NOT_AVAILABLE: UInt32 = 100;
+}
+
+forge ShellLexer {
+    
+    const TOKEN_WORD: UInt32 = 1;
+    const TOKEN_PIPE: UInt32 = 2;
+    const TOKEN_REDIR_IN: UInt32 = 3;
+    const TOKEN_REDIR_OUT: UInt32 = 4;
+    const TOKEN_REDIR_APPEND: UInt32 = 5;
+    const TOKEN_EOF: UInt32 = 0;
+    
+    const MAX_TOKEN_LEN: UInt32 = 64;
+    const MAX_TOKENS: UInt32 = 32;
+    
+    proc K::init(input: UInt64) -> UInt32 {
+        return 0;
+    }
+    
+    proc K::next_token() -> UInt32 {
+        return 0;
+    }
+    
+    proc K::get_token_value() -> UInt64 {
+        return 0;
+    }
+    
+    proc K::peek_token() -> UInt32 {
+        return 0;
+    }
+    
+    proc K::reset() -> UInt32 {
+        return 0;
+    }
+    
+    proc K::tokenize(input: UInt64, output: UInt64) -> UInt32 {
+        return 0;
+    }
+    
+    proc Q::init(input: UInt64) -> UInt32 {
+        return 100;
+    }
+    
+    proc Q::next_token() -> UInt32 {
+        return 100;
+    }
+    
+    proc Q::get_token_value() -> UInt64 {
+        return 0;
+    }
+    
+    proc Q::peek_token() -> UInt32 {
+        return 100;
+    }
+    
+    proc Q::reset() -> UInt32 {
+        return 100;
+    }
+    
+    proc Q::tokenize(input: UInt64, output: UInt64) -> UInt32 {
+        return 100;
+    }
+    
+    proc Phi::init(input: UInt64) -> UInt32 {
+        return 100;
+    }
+    
+    proc Phi::next_token() -> UInt32 {
+        return 100;
+    }
+    
+    proc Phi::get_token_value() -> UInt64 {
+        return 0;
+    }
+    
+    proc Phi::peek_token() -> UInt32 {
+        return 100;
+    }
+    
+    proc Phi::reset() -> UInt32 {
+        return 100;
+    }
+    
+    proc Phi::tokenize(input: UInt64, output: UInt64) -> UInt32 {
+        return 100;
+    }
+}

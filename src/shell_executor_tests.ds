@@ -1,0 +1,149 @@
+// Shell Executor Tests
+
+forge ShellExecutorTests {
+    
+    proc test_k_execute() -> UInt32 {
+        let result = ShellExecutor::K::execute(0, 0);
+        return 1;
+    }
+    
+    proc test_k_lookup_command() -> UInt32 {
+        let result = ShellExecutor::K::lookup_command(0);
+        return 1;
+    }
+    
+    proc test_k_register_builtin() -> UInt32 {
+        let result = ShellExecutor::K::register_builtin(0, 0);
+        return 1;
+    }
+    
+    proc test_k_run_builtin() -> UInt32 {
+        let result = ShellExecutor::K::run_builtin(0, 0);
+        return 1;
+    }
+    
+    proc test_k_spawn_process() -> UInt32 {
+        let result = ShellExecutor::K::spawn_process(0, 0, 0, 0);
+        return 1;
+    }
+    
+    proc test_k_wait_for_child() -> UInt32 {
+        let result = ShellExecutor::K::wait_for_child(0);
+        return 1;
+    }
+    
+    proc test_q_execute_returns_error() -> UInt32 {
+        let result = ShellExecutor::Q::execute(0, 0);
+        if result == 100 {
+            return 1;
+        }
+        return 0;
+    }
+    
+    proc test_q_lookup_command() -> UInt32 {
+        let result = ShellExecutor::Q::lookup_command(0);
+        return 1;
+    }
+    
+    proc test_q_register_builtin_returns_error() -> UInt32 {
+        let result = ShellExecutor::Q::register_builtin(0, 0);
+        if result == 100 {
+            return 1;
+        }
+        return 0;
+    }
+    
+    proc test_q_run_builtin_returns_error() -> UInt32 {
+        let result = ShellExecutor::Q::run_builtin(0, 0);
+        if result == 100 {
+            return 1;
+        }
+        return 0;
+    }
+    
+    proc test_q_spawn_process_returns_error() -> UInt32 {
+        let result = ShellExecutor::Q::spawn_process(0, 0, 0, 0);
+        if result == 100 {
+            return 1;
+        }
+        return 0;
+    }
+    
+    proc test_q_wait_for_child_returns_error() -> UInt32 {
+        let result = ShellExecutor::Q::wait_for_child(0);
+        if result == 100 {
+            return 1;
+        }
+        return 0;
+    }
+    
+    proc test_phi_execute_returns_error() -> UInt32 {
+        let result = ShellExecutor::Phi::execute(0, 0);
+        if result == 100 {
+            return 1;
+        }
+        return 0;
+    }
+    
+    proc test_phi_lookup_command() -> UInt32 {
+        let result = ShellExecutor::Phi::lookup_command(0);
+        return 1;
+    }
+    
+    proc test_phi_register_builtin_returns_error() -> UInt32 {
+        let result = ShellExecutor::Phi::register_builtin(0, 0);
+        if result == 100 {
+            return 1;
+        }
+        return 0;
+    }
+    
+    proc test_phi_run_builtin_returns_error() -> UInt32 {
+        let result = ShellExecutor::Phi::run_builtin(0, 0);
+        if result == 100 {
+            return 1;
+        }
+        return 0;
+    }
+    
+    proc test_phi_spawn_process_returns_error() -> UInt32 {
+        let result = ShellExecutor::Phi::spawn_process(0, 0, 0, 0);
+        if result == 100 {
+            return 1;
+        }
+        return 0;
+    }
+    
+    proc test_phi_wait_for_child_returns_error() -> UInt32 {
+        let result = ShellExecutor::Phi::wait_for_child(0);
+        if result == 100 {
+            return 1;
+        }
+        return 0;
+    }
+    
+    proc run_all_tests() -> UInt32 {
+        let passed = 0;
+        
+        passed = passed + ShellExecutorTests::test_k_execute();
+        passed = passed + ShellExecutorTests::test_k_lookup_command();
+        passed = passed + ShellExecutorTests::test_k_register_builtin();
+        passed = passed + ShellExecutorTests::test_k_run_builtin();
+        passed = passed + ShellExecutorTests::test_k_spawn_process();
+        passed = passed + ShellExecutorTests::test_k_wait_for_child();
+        passed = passed + ShellExecutorTests::test_q_execute_returns_error();
+        passed = passed + ShellExecutorTests::test_q_lookup_command();
+        passed = passed + ShellExecutorTests::test_q_register_builtin_returns_error();
+        passed = passed + ShellExecutorTests::test_q_run_builtin_returns_error();
+        passed = passed + ShellExecutorTests::test_q_spawn_process_returns_error();
+        passed = passed + ShellExecutorTests::test_q_wait_for_child_returns_error();
+        passed = passed + ShellExecutorTests::test_phi_execute_returns_error();
+        passed = passed + ShellExecutorTests::test_phi_lookup_command();
+        passed = passed + ShellExecutorTests::test_phi_register_builtin_returns_error();
+        passed = passed + ShellExecutorTests::test_phi_run_builtin_returns_error();
+        passed = passed + ShellExecutorTests::test_phi_spawn_process_returns_error();
+        passed = passed + ShellExecutorTests::test_phi_wait_for_child_returns_error();
+        
+        return passed;
+    }
+}

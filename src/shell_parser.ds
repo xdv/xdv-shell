@@ -1,0 +1,100 @@
+// Shell Parser - Command Parser
+
+forge ShellParserErrors {
+    const ERR_OK: UInt32 = 0;
+    const ERR_SYNTAX: UInt32 = 1;
+    const ERR_PARSE: UInt32 = 2;
+    const ERR_TOO_MANY_ARGS: UInt32 = 3;
+    const ERR_INVALID_COMMAND: UInt32 = 4;
+    const ERR_DOMAIN_NOT_AVAILABLE: UInt32 = 100;
+}
+
+forge ShellParser {
+    
+    const MAX_ARGS: UInt32 = 16;
+    const MAX_CMDS: UInt32 = 8;
+    
+    proc K::init() -> UInt32 {
+        return 0;
+    }
+    
+    proc K::parse(tokens: UInt64, count: UInt32) -> UInt64 {
+        return 0;
+    }
+    
+    proc K::parse_simple(cmd: UInt64, args: UInt64) -> UInt32 {
+        return 0;
+    }
+    
+    proc K::parse_pipeline(commands: UInt64) -> UInt32 {
+        return 0;
+    }
+    
+    proc K::parse_redirect(cmd: UInt64) -> UInt32 {
+        return 0;
+    }
+    
+    proc K::get_arg_count() -> UInt32 {
+        return 0;
+    }
+    
+    proc K::get_command() -> UInt64 {
+        return 0;
+    }
+    
+    proc Q::init() -> UInt32 {
+        return 100;
+    }
+    
+    proc Q::parse(tokens: UInt64, count: UInt32) -> UInt64 {
+        return 0;
+    }
+    
+    proc Q::parse_simple(cmd: UInt64, args: UInt64) -> UInt32 {
+        return 100;
+    }
+    
+    proc Q::parse_pipeline(commands: UInt64) -> UInt32 {
+        return 100;
+    }
+    
+    proc Q::parse_redirect(cmd: UInt64) -> UInt32 {
+        return 100;
+    }
+    
+    proc Q::get_arg_count() -> UInt32 {
+        return 0;
+    }
+    
+    proc Q::get_command() -> UInt64 {
+        return 0;
+    }
+    
+    proc Phi::init() -> UInt32 {
+        return 100;
+    }
+    
+    proc Phi::parse(tokens: UInt64, count: UInt32) -> UInt64 {
+        return 0;
+    }
+    
+    proc Phi::parse_simple(cmd: UInt64, args: UInt64) -> UInt32 {
+        return 100;
+    }
+    
+    proc Phi::parse_pipeline(commands: UInt64) -> UInt32 {
+        return 100;
+    }
+    
+    proc Phi::parse_redirect(cmd: UInt64) -> UInt32 {
+        return 100;
+    }
+    
+    proc Phi::get_arg_count() -> UInt32 {
+        return 0;
+    }
+    
+    proc Phi::get_command() -> UInt64 {
+        return 0;
+    }
+}

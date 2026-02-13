@@ -1,0 +1,37 @@
+// Builtin cd - Change Directory
+
+forge BuiltinCdErrors {
+    const ERR_OK: UInt32 = 0;
+    const ERR_NOT_FOUND: UInt32 = 1;
+    const ERR_NOT_DIRECTORY: UInt32 = 2;
+    const ERR_PERMISSION: UInt32 = 3;
+    const ERR_INVALID_PATH: UInt32 = 4;
+    const ERR_DOMAIN_NOT_AVAILABLE: UInt32 = 100;
+}
+
+forge BuiltinCd {
+    
+    proc K::run(path: UInt64) -> UInt32 {
+        return 0;
+    }
+    
+    proc K::get_current_dir() -> UInt64 {
+        return 0;
+    }
+    
+    proc Q::run(path: UInt64) -> UInt32 {
+        return 100;
+    }
+    
+    proc Q::get_current_dir() -> UInt64 {
+        return 0;
+    }
+    
+    proc Phi::run(path: UInt64) -> UInt32 {
+        return 100;
+    }
+    
+    proc Phi::get_current_dir() -> UInt64 {
+        return 0;
+    }
+}

@@ -1,0 +1,40 @@
+// Builtin mkdir - Make Directory
+
+forge BuiltinMkdirErrors {
+    const ERR_OK: UInt32 = 0;
+    const ERR_EXISTS: UInt32 = 1;
+    const ERR_PERMISSION: UInt32 = 2;
+    const ERR_PARENT_NOT_FOUND: UInt32 = 3;
+    const ERR_CREATE_FAILED: UInt32 = 4;
+    const ERR_DOMAIN_NOT_AVAILABLE: UInt32 = 100;
+}
+
+forge BuiltinMkdir {
+    
+    const FLAG_PARENTS: UInt32 = 1;
+    const DEFAULT_MODE: UInt32 = 493;
+    
+    proc K::run(path: UInt64, mode: UInt32, flags: UInt32) -> UInt32 {
+        return 0;
+    }
+    
+    proc K::create_directory(path: UInt64, mode: UInt32) -> UInt32 {
+        return 0;
+    }
+    
+    proc Q::run(path: UInt64, mode: UInt32, flags: UInt32) -> UInt32 {
+        return 100;
+    }
+    
+    proc Q::create_directory(path: UInt64, mode: UInt32) -> UInt32 {
+        return 100;
+    }
+    
+    proc Phi::run(path: UInt64, mode: UInt32, flags: UInt32) -> UInt32 {
+        return 100;
+    }
+    
+    proc Phi::create_directory(path: UInt64, mode: UInt32) -> UInt32 {
+        return 100;
+    }
+}

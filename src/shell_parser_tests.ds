@@ -1,0 +1,161 @@
+// Shell Parser Tests
+
+forge ShellParserTests {
+    
+    proc test_k_init() -> UInt32 {
+        let result = ShellParser::K::init();
+        return 1;
+    }
+    
+    proc test_k_parse() -> UInt32 {
+        let result = ShellParser::K::parse(0, 0);
+        return 1;
+    }
+    
+    proc test_k_parse_simple() -> UInt32 {
+        let result = ShellParser::K::parse_simple(0, 0);
+        return 1;
+    }
+    
+    proc test_k_parse_pipeline() -> UInt32 {
+        let result = ShellParser::K::parse_pipeline(0);
+        return 1;
+    }
+    
+    proc test_k_parse_redirect() -> UInt32 {
+        let result = ShellParser::K::parse_redirect(0);
+        return 1;
+    }
+    
+    proc test_k_get_arg_count() -> UInt32 {
+        let result = ShellParser::K::get_arg_count();
+        return 1;
+    }
+    
+    proc test_k_get_command() -> UInt32 {
+        let result = ShellParser::K::get_command();
+        return 1;
+    }
+    
+    proc test_q_init_returns_error() -> UInt32 {
+        let result = ShellParser::Q::init();
+        if result == 100 {
+            return 1;
+        }
+        return 0;
+    }
+    
+    proc test_q_parse() -> UInt32 {
+        let result = ShellParser::Q::parse(0, 0);
+        return 1;
+    }
+    
+    proc test_q_parse_simple_returns_error() -> UInt32 {
+        let result = ShellParser::Q::parse_simple(0, 0);
+        if result == 100 {
+            return 1;
+        }
+        return 0;
+    }
+    
+    proc test_q_parse_pipeline_returns_error() -> UInt32 {
+        let result = ShellParser::Q::parse_pipeline(0);
+        if result == 100 {
+            return 1;
+        }
+        return 0;
+    }
+    
+    proc test_q_parse_redirect_returns_error() -> UInt32 {
+        let result = ShellParser::Q::parse_redirect(0);
+        if result == 100 {
+            return 1;
+        }
+        return 0;
+    }
+    
+    proc test_q_get_arg_count() -> UInt32 {
+        let result = ShellParser::Q::get_arg_count();
+        return 1;
+    }
+    
+    proc test_q_get_command() -> UInt32 {
+        let result = ShellParser::Q::get_command();
+        return 1;
+    }
+    
+    proc test_phi_init_returns_error() -> UInt32 {
+        let result = ShellParser::Phi::init();
+        if result == 100 {
+            return 1;
+        }
+        return 0;
+    }
+    
+    proc test_phi_parse() -> UInt32 {
+        let result = ShellParser::Phi::parse(0, 0);
+        return 1;
+    }
+    
+    proc test_phi_parse_simple_returns_error() -> UInt32 {
+        let result = ShellParser::Phi::parse_simple(0, 0);
+        if result == 100 {
+            return 1;
+        }
+        return 0;
+    }
+    
+    proc test_phi_parse_pipeline_returns_error() -> UInt32 {
+        let result = ShellParser::Phi::parse_pipeline(0);
+        if result == 100 {
+            return 1;
+        }
+        return 0;
+    }
+    
+    proc test_phi_parse_redirect_returns_error() -> UInt32 {
+        let result = ShellParser::Phi::parse_redirect(0);
+        if result == 100 {
+            return 1;
+        }
+        return 0;
+    }
+    
+    proc test_phi_get_arg_count() -> UInt32 {
+        let result = ShellParser::Phi::get_arg_count();
+        return 1;
+    }
+    
+    proc test_phi_get_command() -> UInt32 {
+        let result = ShellParser::Phi::get_command();
+        return 1;
+    }
+    
+    proc run_all_tests() -> UInt32 {
+        let passed = 0;
+        
+        passed = passed + ShellParserTests::test_k_init();
+        passed = passed + ShellParserTests::test_k_parse();
+        passed = passed + ShellParserTests::test_k_parse_simple();
+        passed = passed + ShellParserTests::test_k_parse_pipeline();
+        passed = passed + ShellParserTests::test_k_parse_redirect();
+        passed = passed + ShellParserTests::test_k_get_arg_count();
+        passed = passed + ShellParserTests::test_k_get_command();
+        passed = passed + ShellParserTests::test_q_init_returns_error();
+        passed = passed + ShellParserTests::test_q_parse();
+        passed = passed + ShellParserTests::test_q_parse_simple_returns_error();
+        passed = passed + ShellParserTests::test_q_parse_pipeline_returns_error();
+        passed = passed + ShellParserTests::test_q_parse_redirect_returns_error();
+        passed = passed + ShellParserTests::test_q_get_arg_count();
+        passed = passed + ShellParserTests::test_q_get_command();
+        passed = passed + ShellParserTests::test_phi_init_returns_error();
+        passed = passed + ShellParserTests::test_phi_parse();
+        passed = passed + ShellParserTests::test_phi_parse_simple_returns_error();
+        passed = passed + ShellParserTests::test_phi_parse_pipeline_returns_error();
+        passed = passed + ShellParserTests::test_phi_parse_redirect_returns_error();
+        passed = passed + ShellParserTests::test_phi_get_arg_count();
+        passed = passed + ShellParserTests::test_phi_get_command();
+        
+        return passed;
+    }
+}

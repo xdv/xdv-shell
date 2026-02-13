@@ -1,0 +1,85 @@
+// Shell Prompt - Prompt Generation
+
+forge ShellPromptErrors {
+    const ERR_OK: UInt32 = 0;
+    const ERR_INVALID_CWD: UInt32 = 1;
+    const ERR_DOMAIN_NOT_AVAILABLE: UInt32 = 100;
+}
+
+forge ShellPrompt {
+    
+    const DEFAULT_PROMPT: UInt64 = 0;
+    const MAX_PROMPT: UInt32 = 128;
+    
+    proc K::generate() -> UInt64 {
+        return 0;
+    }
+    
+    proc K::get_cwd() -> UInt64 {
+        return 0;
+    }
+    
+    proc K::set_cwd(path: UInt64) -> UInt32 {
+        return 0;
+    }
+    
+    proc K::get_username() -> UInt64 {
+        return 0;
+    }
+    
+    proc K::get_hostname() -> UInt64 {
+        return 0;
+    }
+    
+    proc K::format_prompt() -> UInt64 {
+        return 0;
+    }
+    
+    proc Q::generate() -> UInt64 {
+        return 0;
+    }
+    
+    proc Q::get_cwd() -> UInt64 {
+        return 0;
+    }
+    
+    proc Q::set_cwd(path: UInt64) -> UInt32 {
+        return 100;
+    }
+    
+    proc Q::get_username() -> UInt64 {
+        return 0;
+    }
+    
+    proc Q::get_hostname() -> UInt64 {
+        return 0;
+    }
+    
+    proc Q::format_prompt() -> UInt64 {
+        return 0;
+    }
+    
+    proc Phi::generate() -> UInt64 {
+        return 0;
+    }
+    
+    proc Phi::get_cwd() -> UInt64 {
+        return 0;
+    }
+    
+    proc Phi::set_cwd(path: UInt64) -> UInt32 {
+        return 100;
+    }
+    
+    proc Phi::get_username() -> UInt64 {
+        return 0;
+    }
+    
+    proc Phi::get_hostname() -> UInt64 {
+        return 0;
+    }
+    
+    proc Phi::format_prompt() -> UInt64 {
+        return 0;
+    }
+}

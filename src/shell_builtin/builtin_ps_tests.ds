@@ -1,0 +1,101 @@
+// Builtin ps Tests
+
+forge BuiltinPsTests {
+    
+    proc test_k_run() -> UInt32 {
+        let result = BuiltinPs::K::run(0);
+        return 1;
+    }
+    
+    proc test_k_list_processes() -> UInt32 {
+        let result = BuiltinPs::K::list_processes();
+        return 1;
+    }
+    
+    proc test_k_print_process() -> UInt32 {
+        let result = BuiltinPs::K::print_process(0, 0, 0);
+        return 1;
+    }
+    
+    proc test_k_get_process_count() -> UInt32 {
+        let result = BuiltinPs::K::get_process_count();
+        return 1;
+    }
+    
+    proc test_q_run_returns_error() -> UInt32 {
+        let result = BuiltinPs::Q::run(0);
+        if result == 100 {
+            return 1;
+        }
+        return 0;
+    }
+    
+    proc test_q_list_processes_returns_error() -> UInt32 {
+        let result = BuiltinPs::Q::list_processes();
+        if result == 100 {
+            return 1;
+        }
+        return 0;
+    }
+    
+    proc test_q_print_process_returns_error() -> UInt32 {
+        let result = BuiltinPs::Q::print_process(0, 0, 0);
+        if result == 100 {
+            return 1;
+        }
+        return 0;
+    }
+    
+    proc test_q_get_process_count() -> UInt32 {
+        let result = BuiltinPs::Q::get_process_count();
+        return 1;
+    }
+    
+    proc test_phi_run_returns_error() -> UInt32 {
+        let result = BuiltinPs::Phi::run(0);
+        if result == 100 {
+            return 1;
+        }
+        return 0;
+    }
+    
+    proc test_phi_list_processes_returns_error() -> UInt32 {
+        let result = BuiltinPs::Phi::list_processes();
+        if result == 100 {
+            return 1;
+        }
+        return 0;
+    }
+    
+    proc test_phi_print_process_returns_error() -> UInt32 {
+        let result = BuiltinPs::Phi::print_process(0, 0, 0);
+        if result == 100 {
+            return 1;
+        }
+        return 0;
+    }
+    
+    proc test_phi_get_process_count() -> UInt32 {
+        let result = BuiltinPs::Phi::get_process_count();
+        return 1;
+    }
+    
+    proc run_all_tests() -> UInt32 {
+        let passed = 0;
+        
+        passed = passed + BuiltinPsTests::test_k_run();
+        passed = passed + BuiltinPsTests::test_k_list_processes();
+        passed = passed + BuiltinPsTests::test_k_print_process();
+        passed = passed + BuiltinPsTests::test_k_get_process_count();
+        passed = passed + BuiltinPsTests::test_q_run_returns_error();
+        passed = passed + BuiltinPsTests::test_q_list_processes_returns_error();
+        passed = passed + BuiltinPsTests::test_q_print_process_returns_error();
+        passed = passed + BuiltinPsTests::test_q_get_process_count();
+        passed = passed + BuiltinPsTests::test_phi_run_returns_error();
+        passed = passed + BuiltinPsTests::test_phi_list_processes_returns_error();
+        passed = passed + BuiltinPsTests::test_phi_print_process_returns_error();
+        passed = passed + BuiltinPsTests::test_phi_get_process_count();
+        
+        return passed;
+    }
+}

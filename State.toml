@@ -1,0 +1,24 @@
+# XDV Shell Workspace Manifest
+# Command Line Shell for XDV OS
+
+[workspace]
+name = "xdv_shell"
+version = "0.2.0"
+description = "XDV Shell - Command Line Shell for XDV OS"
+
+[sector]
+name = "xdv_shell"
+path = "src"
+
+[dependencies]
+# Core DPL libraries
+dustlib = { path = "../dustlib" }
+dustlib_k = { path = "../dustlib_k" }
+# XDV Runtime
+xdv_runtime = { path = "../xdv-runtime" }
+# XDVFS
+xdv_xdvfs = { path = "../xdv-xdvfs" }
+
+[target.x64-pc-none]
+linker = "ld"
+linker_flags = ["-nostdlib", "-static"]

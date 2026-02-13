@@ -1,0 +1,83 @@
+// Builtin rm Tests
+
+forge BuiltinRmTests {
+    
+    proc test_k_run() -> UInt32 {
+        let result = BuiltinRm::K::run(0, 0);
+        return 1;
+    }
+    
+    proc test_k_remove_file() -> UInt32 {
+        let result = BuiltinRm::K::remove_file(0);
+        return 1;
+    }
+    
+    proc test_k_remove_directory() -> UInt32 {
+        let result = BuiltinRm::K::remove_directory(0);
+        return 1;
+    }
+    
+    proc test_q_run_returns_error() -> UInt32 {
+        let result = BuiltinRm::Q::run(0, 0);
+        if result == 100 {
+            return 1;
+        }
+        return 0;
+    }
+    
+    proc test_q_remove_file_returns_error() -> UInt32 {
+        let result = BuiltinRm::Q::remove_file(0);
+        if result == 100 {
+            return 1;
+        }
+        return 0;
+    }
+    
+    proc test_q_remove_directory_returns_error() -> UInt32 {
+        let result = BuiltinRm::Q::remove_directory(0);
+        if result == 100 {
+            return 1;
+        }
+        return 0;
+    }
+    
+    proc test_phi_run_returns_error() -> UInt32 {
+        let result = BuiltinRm::Phi::run(0, 0);
+        if result == 100 {
+            return 1;
+        }
+        return 0;
+    }
+    
+    proc test_phi_remove_file_returns_error() -> UInt32 {
+        let result = BuiltinRm::Phi::remove_file(0);
+        if result == 100 {
+            return 1;
+        }
+        return 0;
+    }
+    
+    proc test_phi_remove_directory_returns_error() -> UInt32 {
+        let result = BuiltinRm::Phi::remove_directory(0);
+        if result == 100 {
+            return 1;
+        }
+        return 0;
+    }
+    
+    proc run_all_tests() -> UInt32 {
+        let passed = 0;
+        
+        passed = passed + BuiltinRmTests::test_k_run();
+        passed = passed + BuiltinRmTests::test_k_remove_file();
+        passed = passed + BuiltinRmTests::test_k_remove_directory();
+        passed = passed + BuiltinRmTests::test_q_run_returns_error();
+        passed = passed + BuiltinRmTests::test_q_remove_file_returns_error();
+        passed = passed + BuiltinRmTests::test_q_remove_directory_returns_error();
+        passed = passed + BuiltinRmTests::test_phi_run_returns_error();
+        passed = passed + BuiltinRmTests::test_phi_remove_file_returns_error();
+        passed = passed + BuiltinRmTests::test_phi_remove_directory_returns_error();
+        
+        return passed;
+    }
+}

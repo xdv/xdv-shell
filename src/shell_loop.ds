@@ -1,0 +1,65 @@
+// Shell Loop - Main Shell Loop
+
+forge ShellLoopErrors {
+    const ERR_OK: UInt32 = 0;
+    const ERR_READ_LINE: UInt32 = 1;
+    const ERR_PARSE: UInt32 = 2;
+    const ERR_EXECUTE: UInt32 = 3;
+    const ERR_UNKNOWN_COMMAND: UInt32 = 4;
+    const ERR_DOMAIN_NOT_AVAILABLE: UInt32 = 100;
+}
+
+forge ShellLoop {
+    
+    const MAX_LINE: UInt32 = 256;
+    const RUNNING: UInt32 = 1;
+    const STOPPED: UInt32 = 0;
+    
+    proc K::run_loop() -> UInt32 {
+        return 0;
+    }
+    
+    proc K::process_line(line: UInt64) -> UInt32 {
+        return 0;
+    }
+    
+    proc K::handle_exit(code: UInt32) -> UInt32 {
+        return 0;
+    }
+    
+    proc K::print_error(msg: UInt64) -> UInt32 {
+        return 0;
+    }
+    
+    proc Q::run_loop() -> UInt32 {
+        return 100;
+    }
+    
+    proc Q::process_line(line: UInt64) -> UInt32 {
+        return 100;
+    }
+    
+    proc Q::handle_exit(code: UInt32) -> UInt32 {
+        return 100;
+    }
+    
+    proc Q::print_error(msg: UInt64) -> UInt32 {
+        return 100;
+    }
+    
+    proc Phi::run_loop() -> UInt32 {
+        return 100;
+    }
+    
+    proc Phi::process_line(line: UInt64) -> UInt32 {
+        return 100;
+    }
+    
+    proc Phi::handle_exit(code: UInt32) -> UInt32 {
+        return 100;
+    }
+    
+    proc Phi::print_error(msg: UInt64) -> UInt32 {
+        return 100;
+    }
+}

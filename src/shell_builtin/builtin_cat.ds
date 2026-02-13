@@ -1,0 +1,53 @@
+// Builtin cat - Display File Contents
+
+forge BuiltinCatErrors {
+    const ERR_OK: UInt32 = 0;
+    const ERR_NOT_FOUND: UInt32 = 1;
+    const ERR_PERMISSION: UInt32 = 2;
+    const ERR_READ_FAILED: UInt32 = 3;
+    const ERR_IS_DIRECTORY: UInt32 = 4;
+    const ERR_DOMAIN_NOT_AVAILABLE: UInt32 = 100;
+}
+
+forge BuiltinCat {
+    
+    const FLAG_NUMBER: UInt32 = 1;
+    const FLAG_SHOW_TABS: UInt32 = 2;
+    const FLAG_SHOW_ENDS: UInt32 = 4;
+    
+    proc K::run(path: UInt64, flags: UInt32) -> UInt32 {
+        return 0;
+    }
+    
+    proc K::read_file(path: UInt64) -> UInt32 {
+        return 0;
+    }
+    
+    proc K::print_content(buffer: UInt64, size: UInt32) -> UInt32 {
+        return 0;
+    }
+    
+    proc Q::run(path: UInt64, flags: UInt32) -> UInt32 {
+        return 100;
+    }
+    
+    proc Q::read_file(path: UInt64) -> UInt32 {
+        return 100;
+    }
+    
+    proc Q::print_content(buffer: UInt64, size: UInt32) -> UInt32 {
+        return 100;
+    }
+    
+    proc Phi::run(path: UInt64, flags: UInt32) -> UInt32 {
+        return 100;
+    }
+    
+    proc Phi::read_file(path: UInt64) -> UInt32 {
+        return 100;
+    }
+    
+    proc Phi::print_content(buffer: UInt64, size: UInt32) -> UInt32 {
+        return 100;
+    }
+}

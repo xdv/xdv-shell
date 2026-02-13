@@ -1,0 +1,89 @@
+// Shell Completion - Tab Completion
+
+forge ShellCompletionErrors {
+    const ERR_OK: UInt32 = 0;
+    const ERR_NO_MATCH: UInt32 = 1;
+    const ERR_AMBIGUOUS: UInt32 = 2;
+    const ERR_TOO_MANY: UInt32 = 3;
+    const ERR_DOMAIN_NOT_AVAILABLE: UInt32 = 100;
+}
+
+forge ShellCompletion {
+    
+    const MAX_COMPLETIONS: UInt32 = 32;
+    const COMPLETE_FILE: UInt32 = 1;
+    const COMPLETE_DIR: UInt32 = 2;
+    const COMPLETE_CMD: UInt32 = 3;
+    
+    proc K::complete(input: UInt64, cursor: UInt32) -> UInt32 {
+        return 0;
+    }
+    
+    proc K::get_completion_count() -> UInt32 {
+        return 0;
+    }
+    
+    proc K::get_completion(index: UInt32) -> UInt64 {
+        return 0;
+    }
+    
+    proc K::complete_files(prefix: UInt64) -> UInt32 {
+        return 0;
+    }
+    
+    proc K::complete_commands(prefix: UInt64) -> UInt32 {
+        return 0;
+    }
+    
+    proc K::add_completion(match: UInt64) -> UInt32 {
+        return 0;
+    }
+    
+    proc Q::complete(input: UInt64, cursor: UInt32) -> UInt32 {
+        return 100;
+    }
+    
+    proc Q::get_completion_count() -> UInt32 {
+        return 0;
+    }
+    
+    proc Q::get_completion(index: UInt32) -> UInt64 {
+        return 0;
+    }
+    
+    proc Q::complete_files(prefix: UInt64) -> UInt32 {
+        return 100;
+    }
+    
+    proc Q::complete_commands(prefix: UInt64) -> UInt32 {
+        return 100;
+    }
+    
+    proc Q::add_completion(match: UInt64) -> UInt32 {
+        return 100;
+    }
+    
+    proc Phi::complete(input: UInt64, cursor: UInt32) -> UInt32 {
+        return 100;
+    }
+    
+    proc Phi::get_completion_count() -> UInt32 {
+        return 0;
+    }
+    
+    proc Phi::get_completion(index: UInt32) -> UInt64 {
+        return 0;
+    }
+    
+    proc Phi::complete_files(prefix: UInt64) -> UInt32 {
+        return 100;
+    }
+    
+    proc Phi::complete_commands(prefix: UInt64) -> UInt32 {
+        return 100;
+    }
+    
+    proc Phi::add_completion(match: UInt64) -> UInt32 {
+        return 100;
+    }
+}
