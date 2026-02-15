@@ -10,48 +10,54 @@ forge BuiltinLsErrors {
 }
 
 forge BuiltinLs {
-    
+
     const FLAG_ALL: UInt32 = 1;
     const FLAG_LONG: UInt32 = 2;
     const FLAG_RECURSIVE: UInt32 = 4;
-    
+
     proc K::run(path: UInt64, flags: UInt32) -> UInt32 {
         if path == 0 {
-            return list_entries(2);
+            return list_entries(get_cwd());
         } else {
             return list_entries(path);
         }
     }
-    
+
     proc K::list_entries(dir: UInt64) -> UInt32 {
-        opendir(dir);
-        readdir(dir);
-        closedir(dir);
-        emit "ls: listed directory";
-        return ERR_OK;
-    }
-    
-    proc K::print_entry(name: UInt64, is_dir: UInt32) -> UInt32 {
-        puts(name);
-        if is_dir == 0 {
-            putchar(32);
+        if dir == 0 {
+            return ERR_NOT_DIRECTORY;
         } else {
-            putchar(47);
+            let handle = opendir(dir);
+            if handle == 0 {
+                return ERR_NOT_DIRECTORY;
+            } else {
+                readdir(handle);
+                let close_result = closedir(handle);
+                if close_result == ERR_OK {
+                    return ERR_OK;
+                } else {
+                    return ERR_READ_FAILED;
+                }
+            }
         }
-        putchar(10);
-        return ERR_OK;
+    }
+
+    proc K::print_entry(name: UInt64, is_dir: UInt32) -> UInt32 {
+        if name == 0 {
+            return ERR_NOT_FOUND;
+        } else {
+            puts(name);
+            if is_dir == 0 {
+                putchar(32);
+            } else {
+                putchar(47);
+            }
+            putchar(10);
+            return ERR_OK;
+        }
     }
 
     proc K::exec_ls(path: UInt64, flags: UInt32) -> UInt32 {
         return run(path, flags);
     }
-    
-    
-    
-    
-    
-    
 }
-
-
-

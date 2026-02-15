@@ -7,41 +7,45 @@ forge ShellPromptErrors {
 }
 
 forge ShellPrompt {
-    
+
     const DEFAULT_PROMPT: UInt64 = 9001;
     const PROMPT_HASH: UInt8 = 35;
     const PROMPT_COLON: UInt8 = 58;
-    const PROMPT_SPACE: UInt8 = 32;
 
     const DEFAULT_CWD: UInt64 = 9100;
     const DEFAULT_USERNAME: UInt64 = 9200;
     const DEFAULT_HOSTNAME: UInt64 = 9300;
     const MAX_PROMPT: UInt32 = 128;
-    
+
     proc K::generate() -> UInt64 {
         return format_prompt();
     }
-    
+
     proc K::get_cwd() -> UInt64 {
         return DEFAULT_CWD;
     }
-    
+
     proc K::set_cwd(path: UInt64) -> UInt32 {
         if path == 0 {
-            return 1;
+            return ERR_INVALID_CWD;
         } else {
-            return 0;
+            let path_len = len(path);
+            if path_len == 0 {
+                return ERR_INVALID_CWD;
+            } else {
+                return ERR_OK;
+            }
         }
     }
-    
+
     proc K::get_username() -> UInt64 {
         return DEFAULT_USERNAME;
     }
-    
+
     proc K::get_hostname() -> UInt64 {
         return DEFAULT_HOSTNAME;
     }
-    
+
     proc K::format_prompt() -> UInt64 {
         return DEFAULT_PROMPT;
     }
@@ -50,22 +54,6 @@ forge ShellPrompt {
         generate();
         putchar(PROMPT_HASH);
         putchar(PROMPT_COLON);
-        putchar(PROMPT_SPACE);
-        return 0;
+        return ERR_OK;
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
 }
-
-
-

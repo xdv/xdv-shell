@@ -10,31 +10,51 @@ forge ShellParserErrors {
 }
 
 forge ShellParser {
-    
+
     const MAX_ARGS: UInt32 = 16;
     const MAX_CMDS: UInt32 = 8;
-    
+
+    const CMD_CD: UInt64 = 1;
+    const CMD_LS: UInt64 = 2;
+    const CMD_CAT: UInt64 = 3;
+    const CMD_MKDIR: UInt64 = 4;
+    const CMD_RM: UInt64 = 5;
+    const CMD_ECHO: UInt64 = 6;
+    const CMD_PS: UInt64 = 7;
+    const CMD_HELP: UInt64 = 8;
+    const CMD_EXIT: UInt64 = 9;
+    const CMD_EDX: UInt64 = 10;
+
     proc K::init() -> UInt32 {
         return ERR_OK;
     }
-    
+
     proc K::parse(tokens: UInt64, count: UInt32) -> UInt64 {
         if count == 0 {
             return 0;
         } else {
-            parse_simple(tokens, 0);
-            return normalize_command(tokens);
+            if count > MAX_ARGS {
+                return 0;
+            } else {
+                let simple_result = parse_simple(tokens, 0);
+                if simple_result == ERR_OK {
+                    return normalize_command(tokens);
+                } else {
+                    return 0;
+                }
+            }
         }
     }
-    
+
     proc K::parse_simple(cmd: UInt64, args: UInt64) -> UInt32 {
-        if cmd == 0 {
+        let normalized = normalize_command(cmd);
+        if normalized == 0 {
             return ERR_INVALID_COMMAND;
         } else {
             return ERR_OK;
         }
     }
-    
+
     proc K::parse_pipeline(commands: UInt64) -> UInt32 {
         if commands == 0 {
             return ERR_PARSE;
@@ -42,7 +62,7 @@ forge ShellParser {
             return ERR_OK;
         }
     }
-    
+
     proc K::parse_redirect(cmd: UInt64) -> UInt32 {
         if cmd == 0 {
             return ERR_SYNTAX;
@@ -50,37 +70,56 @@ forge ShellParser {
             return ERR_OK;
         }
     }
-    
+
     proc K::get_arg_count() -> UInt32 {
-        return 0;
+        return 1;
     }
-    
+
     proc K::get_command() -> UInt64 {
-        return 0;
+        return CMD_HELP;
     }
 
     proc K::normalize_command(token: UInt64) -> UInt64 {
-        if token == 0 {
-            return 0;
+        if token == CMD_CD {
+            return CMD_CD;
         } else {
-            return token;
+            if token == CMD_LS {
+                return CMD_LS;
+            } else {
+                if token == CMD_CAT {
+                    return CMD_CAT;
+                } else {
+                    if token == CMD_MKDIR {
+                        return CMD_MKDIR;
+                    } else {
+                        if token == CMD_RM {
+                            return CMD_RM;
+                        } else {
+                            if token == CMD_ECHO {
+                                return CMD_ECHO;
+                            } else {
+                                if token == CMD_PS {
+                                    return CMD_PS;
+                                } else {
+                                    if token == CMD_HELP {
+                                        return CMD_HELP;
+                                    } else {
+                                        if token == CMD_EXIT {
+                                            return CMD_EXIT;
+                                        } else {
+                                            if token == CMD_EDX {
+                                                return CMD_EDX;
+                                            } else {
+                                                return 0;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
 }
-
-
-

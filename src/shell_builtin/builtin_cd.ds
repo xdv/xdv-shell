@@ -10,21 +10,20 @@ forge BuiltinCdErrors {
 }
 
 forge BuiltinCd {
-    
+
     proc K::run(path: UInt64) -> UInt32 {
         if path == 0 {
             return ERR_INVALID_PATH;
         } else {
             let set_result = set_cwd(path);
             if set_result == ERR_OK {
-                emit "cd: directory changed";
                 return ERR_OK;
             } else {
-                return set_result;
+                return ERR_NOT_FOUND;
             }
         }
     }
-    
+
     proc K::get_current_dir() -> UInt64 {
         return get_cwd();
     }
@@ -32,11 +31,4 @@ forge BuiltinCd {
     proc K::exec_cd(path: UInt64) -> UInt32 {
         return run(path);
     }
-    
-    
-    
-    
 }
-
-
-

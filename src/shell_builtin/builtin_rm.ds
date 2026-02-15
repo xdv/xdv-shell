@@ -10,11 +10,11 @@ forge BuiltinRmErrors {
 }
 
 forge BuiltinRm {
-    
+
     const FLAG_FORCE: UInt32 = 1;
     const FLAG_RECURSIVE: UInt32 = 2;
     const FLAG_INTERACTIVE: UInt32 = 4;
-    
+
     proc K::run(path: UInt64, flags: UInt32) -> UInt32 {
         if path == 0 {
             return ERR_NOT_FOUND;
@@ -26,35 +26,34 @@ forge BuiltinRm {
             }
         }
     }
-    
+
     proc K::remove_file(path: UInt64) -> UInt32 {
         if path == 0 {
             return ERR_NOT_FOUND;
         } else {
-            emit "rm: file removed";
-            return ERR_OK;
+            let remove_status = unlink(path);
+            if remove_status == ERR_OK {
+                return ERR_OK;
+            } else {
+                return ERR_REMOVE_FAILED;
+            }
         }
     }
-    
+
     proc K::remove_directory(path: UInt64) -> UInt32 {
         if path == 0 {
             return ERR_NOT_FOUND;
         } else {
-            emit "rm: directory removed";
-            return ERR_OK;
+            let remove_status = rmdir(path);
+            if remove_status == ERR_OK {
+                return ERR_OK;
+            } else {
+                return ERR_REMOVE_FAILED;
+            }
         }
     }
 
     proc K::exec_rm(path: UInt64, flags: UInt32) -> UInt32 {
         return run(path, flags);
     }
-    
-    
-    
-    
-    
-    
 }
-
-
-

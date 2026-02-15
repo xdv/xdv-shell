@@ -7,7 +7,7 @@ forge BuiltinHelpErrors {
 }
 
 forge BuiltinHelp {
-    
+
     proc K::run(topic: UInt64) -> UInt32 {
         if topic == 0 {
             return print_commands();
@@ -15,35 +15,28 @@ forge BuiltinHelp {
             return print_usage(topic);
         }
     }
-    
+
     proc K::print_commands() -> UInt32 {
-        emit "Builtins: cd ls cat mkdir rm echo ps help exit";
+        emit "commands: cd ls cat mkdir rm echo ps help exit edx";
         return ERR_OK;
     }
-    
+
     proc K::print_usage(cmd: UInt64) -> UInt32 {
-        emit "Usage:";
-        puts(cmd);
-        putchar(10);
-        return ERR_OK;
+        if cmd == 0 {
+            return ERR_NOT_FOUND;
+        } else {
+            emit "usage: <command> [args]";
+            puts(cmd);
+            putchar(10);
+            return ERR_OK;
+        }
     }
-    
+
     proc K::get_command_count() -> UInt32 {
-        return 9;
+        return 10;
     }
 
     proc K::exec_help(topic: UInt64) -> UInt32 {
         return run(topic);
     }
-    
-    
-    
-    
-    
-    
-    
-    
 }
-
-
-

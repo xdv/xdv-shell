@@ -9,40 +9,96 @@ forge ShellCompletionErrors {
 }
 
 forge ShellCompletion {
-    
+
     const MAX_COMPLETIONS: UInt32 = 32;
     const COMPLETE_FILE: UInt32 = 1;
     const COMPLETE_DIR: UInt32 = 2;
     const COMPLETE_CMD: UInt32 = 3;
-    
+
+    const CMD_CD: UInt64 = 1;
+    const CMD_LS: UInt64 = 2;
+    const CMD_CAT: UInt64 = 3;
+    const CMD_MKDIR: UInt64 = 4;
+    const CMD_RM: UInt64 = 5;
+    const CMD_ECHO: UInt64 = 6;
+    const CMD_PS: UInt64 = 7;
+    const CMD_HELP: UInt64 = 8;
+    const CMD_EXIT: UInt64 = 9;
+    const CMD_EDX: UInt64 = 10;
+
     proc K::complete(input: UInt64, cursor: UInt32) -> UInt32 {
-        if cursor == 0 {
-            return complete_commands(input);
+        if input == 0 {
+            return ERR_NO_MATCH;
         } else {
-            return complete_files(input);
+            if cursor == 0 {
+                return complete_commands(input);
+            } else {
+                return complete_files(input);
+            }
         }
     }
-    
+
     proc K::get_completion_count() -> UInt32 {
-        return 1;
+        return 10;
     }
-    
+
     proc K::get_completion(index: UInt32) -> UInt64 {
         if index == 0 {
-            return 1;
+            return CMD_CD;
         } else {
-            return 0;
+            if index == 1 {
+                return CMD_LS;
+            } else {
+                if index == 2 {
+                    return CMD_CAT;
+                } else {
+                    if index == 3 {
+                        return CMD_MKDIR;
+                    } else {
+                        if index == 4 {
+                            return CMD_RM;
+                        } else {
+                            if index == 5 {
+                                return CMD_ECHO;
+                            } else {
+                                if index == 6 {
+                                    return CMD_PS;
+                                } else {
+                                    if index == 7 {
+                                        return CMD_HELP;
+                                    } else {
+                                        if index == 8 {
+                                            return CMD_EXIT;
+                                        } else {
+                                            if index == 9 {
+                                                return CMD_EDX;
+                                            } else {
+                                                return 0;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
-    
+
     proc K::complete_files(prefix: UInt64) -> UInt32 {
         return add_completion(prefix);
     }
-    
+
     proc K::complete_commands(prefix: UInt64) -> UInt32 {
-        return add_completion(prefix);
+        let first_cmd = get_completion(0);
+        if first_cmd == 0 {
+            return ERR_NO_MATCH;
+        } else {
+            return add_completion(first_cmd);
+        }
     }
-    
+
     proc K::add_completion(item: UInt64) -> UInt32 {
         if item == 0 {
             return ERR_NO_MATCH;
@@ -50,19 +106,4 @@ forge ShellCompletion {
             return ERR_OK;
         }
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
 }
-
-
-

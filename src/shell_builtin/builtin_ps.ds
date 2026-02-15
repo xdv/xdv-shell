@@ -8,46 +8,48 @@ forge BuiltinPsErrors {
 }
 
 forge BuiltinPs {
-    
+
     const FLAG_ALL: UInt32 = 1;
     const FLAG_FULL: UInt32 = 2;
-    
+    const STATE_RUNNING: UInt32 = 1;
+
     proc K::run(flags: UInt32) -> UInt32 {
         return list_processes();
     }
-    
+
     proc K::list_processes() -> UInt32 {
         let pid = getpid();
-        print_process(pid, 0, 0);
-        return ERR_OK;
-    }
-    
-    proc K::print_process(pid: UInt32, name: UInt64, state: UInt32) -> UInt32 {
-        emit "ps: process entry";
-        if name == 0 {
-            putchar(10);
+        if pid == 0 {
+            return ERR_NO_PROCESSES;
         } else {
-            puts(name);
+            return print_process(pid, 0, STATE_RUNNING);
         }
-        return ERR_OK;
     }
-    
+
+    proc K::print_process(pid: UInt32, name: UInt64, state: UInt32) -> UInt32 {
+        if pid == 0 {
+            return ERR_READ_FAILED;
+        } else {
+            if name == 0 {
+                emit "ps: running process";
+            } else {
+                puts(name);
+            }
+            putchar(10);
+            return ERR_OK;
+        }
+    }
+
     proc K::get_process_count() -> UInt32 {
-        return 1;
+        let count = get_task_count();
+        if count == 0 {
+            return 1;
+        } else {
+            return count;
+        }
     }
 
     proc K::exec_ps(flags: UInt32) -> UInt32 {
         return run(flags);
     }
-    
-    
-    
-    
-    
-    
-    
-    
 }
-
-
-

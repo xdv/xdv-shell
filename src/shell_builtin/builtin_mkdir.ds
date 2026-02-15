@@ -10,35 +10,36 @@ forge BuiltinMkdirErrors {
 }
 
 forge BuiltinMkdir {
-    
+
     const FLAG_PARENTS: UInt32 = 1;
     const DEFAULT_MODE: UInt32 = 493;
-    
+
     proc K::run(path: UInt64, mode: UInt32, flags: UInt32) -> UInt32 {
         if path == 0 {
             return ERR_PARENT_NOT_FOUND;
         } else {
-            return create_directory(path, mode);
+            if mode == 0 {
+                return create_directory(path, DEFAULT_MODE);
+            } else {
+                return create_directory(path, mode);
+            }
         }
     }
-    
+
     proc K::create_directory(path: UInt64, mode: UInt32) -> UInt32 {
-        if mode == 0 {
-            return ERR_CREATE_FAILED;
-        } else {
-            emit "mkdir: directory created";
+        let create_status = mkdir(path, mode);
+        if create_status == ERR_OK {
             return ERR_OK;
+        } else {
+            if create_status == ERR_EXISTS {
+                return ERR_EXISTS;
+            } else {
+                return ERR_CREATE_FAILED;
+            }
         }
     }
 
     proc K::exec_mkdir(path: UInt64, mode: UInt32, flags: UInt32) -> UInt32 {
         return run(path, mode, flags);
     }
-    
-    
-    
-    
 }
-
-
-

@@ -10,7 +10,7 @@ forge ShellLoopErrors {
 }
 
 forge ShellLoop {
-    
+
     const MAX_LINE: UInt32 = 256;
     const RUNNING: UInt32 = 1;
     const STOPPED: UInt32 = 0;
@@ -27,6 +27,7 @@ forge ShellLoop {
     const CMD_PS: UInt64 = 7;
     const CMD_HELP: UInt64 = 8;
     const CMD_EXIT: UInt64 = 9;
+    const CMD_EDX: UInt64 = 10;
     const CMD_UNKNOWN: UInt64 = 255;
 
     const ASCII_NUL: UInt32 = 0;
@@ -42,7 +43,22 @@ forge ShellLoop {
     const ASCII_X: UInt32 = 120;
     const ASCII_P: UInt32 = 112;
     const ASCII_H: UInt32 = 104;
-    
+    const ASCII_I: UInt32 = 105;
+
+    const ASCII_C_UPPER: UInt32 = 67;
+    const ASCII_D_UPPER: UInt32 = 68;
+    const ASCII_A_UPPER: UInt32 = 65;
+    const ASCII_L_UPPER: UInt32 = 76;
+    const ASCII_M_UPPER: UInt32 = 77;
+    const ASCII_R_UPPER: UInt32 = 82;
+    const ASCII_E_UPPER: UInt32 = 69;
+    const ASCII_X_UPPER: UInt32 = 88;
+    const ASCII_P_UPPER: UInt32 = 80;
+    const ASCII_H_UPPER: UInt32 = 72;
+    const ASCII_I_UPPER: UInt32 = 73;
+
+    const EXEC_ERR_NOT_FOUND: UInt32 = 1;
+
     proc K::run_loop() -> UInt32 {
         emit "xdv-shell: interactive loop ready";
         return run_cycles(MAX_CYCLES);
@@ -71,26 +87,40 @@ forge ShellLoop {
                 print_error(0);
                 return RUNNING;
             } else {
-                init(line);
-                tokenize(line, 0);
-                parse(line, 1);
-                let exec_result = execute(line, 0);
-                if line == CMD_EXIT {
-                    handle_exit(exec_result);
-                    return STOPPED;
-                } else {
+                let lex_result = tokenize(line, 0);
+                if lex_result == ASCII_NUL {
+                    print_error(0);
                     return RUNNING;
+                } else {
+                    let parsed = parse(line, 1);
+                    if parsed == CMD_NONE {
+                        print_error(0);
+                        return RUNNING;
+                    } else {
+                        let exec_result = execute(parsed, 0);
+                        if exec_result == EXEC_ERR_NOT_FOUND {
+                            print_error(0);
+                            return RUNNING;
+                        } else {
+                            if parsed == CMD_EXIT {
+                                handle_exit(exec_result);
+                                return STOPPED;
+                            } else {
+                                return RUNNING;
+                            }
+                        }
+                    }
                 }
             }
         }
     }
-    
+
     proc K::handle_exit(code: UInt32) -> UInt32 {
         emit "xdv-shell: exit requested";
         cleanup();
         return code;
     }
-    
+
     proc K::print_error(msg: UInt64) -> UInt32 {
         emit "xdv-shell: unknown command";
         if msg == 0 {
@@ -115,31 +145,64 @@ forge ShellLoop {
                     if first == ASCII_C {
                         return decode_c_command();
                     } else {
-                        if first == ASCII_L {
-                            consume_line();
-                            return CMD_LS;
+                        if first == ASCII_C_UPPER {
+                            return decode_c_command();
                         } else {
-                            if first == ASCII_M {
+                            if first == ASCII_L {
                                 consume_line();
-                                return CMD_MKDIR;
+                                return CMD_LS;
                             } else {
-                                if first == ASCII_R {
+                                if first == ASCII_L_UPPER {
                                     consume_line();
-                                    return CMD_RM;
+                                    return CMD_LS;
                                 } else {
-                                    if first == ASCII_E {
-                                        return decode_e_command();
+                                    if first == ASCII_M {
+                                        consume_line();
+                                        return CMD_MKDIR;
                                     } else {
-                                        if first == ASCII_P {
+                                        if first == ASCII_M_UPPER {
                                             consume_line();
-                                            return CMD_PS;
+                                            return CMD_MKDIR;
                                         } else {
-                                            if first == ASCII_H {
+                                            if first == ASCII_R {
                                                 consume_line();
-                                                return CMD_HELP;
+                                                return CMD_RM;
                                             } else {
-                                                consume_line();
-                                                return CMD_UNKNOWN;
+                                                if first == ASCII_R_UPPER {
+                                                    consume_line();
+                                                    return CMD_RM;
+                                                } else {
+                                                    if first == ASCII_E {
+                                                        return decode_e_command();
+                                                    } else {
+                                                        if first == ASCII_E_UPPER {
+                                                            return decode_e_command();
+                                                        } else {
+                                                            if first == ASCII_P {
+                                                                consume_line();
+                                                                return CMD_PS;
+                                                            } else {
+                                                                if first == ASCII_P_UPPER {
+                                                                    consume_line();
+                                                                    return CMD_PS;
+                                                                } else {
+                                                                    if first == ASCII_H {
+                                                                        consume_line();
+                                                                        return CMD_HELP;
+                                                                    } else {
+                                                                        if first == ASCII_H_UPPER {
+                                                                            consume_line();
+                                                                            return CMD_HELP;
+                                                                        } else {
+                                                                            consume_line();
+                                                                            return CMD_UNKNOWN;
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }
                                     }
@@ -158,12 +221,22 @@ forge ShellLoop {
             consume_line();
             return CMD_CD;
         } else {
-            if second == ASCII_A {
+            if second == ASCII_D_UPPER {
                 consume_line();
-                return CMD_CAT;
+                return CMD_CD;
             } else {
-                consume_line();
-                return CMD_UNKNOWN;
+                if second == ASCII_A {
+                    consume_line();
+                    return CMD_CAT;
+                } else {
+                    if second == ASCII_A_UPPER {
+                        consume_line();
+                        return CMD_CAT;
+                    } else {
+                        consume_line();
+                        return CMD_UNKNOWN;
+                    }
+                }
             }
         }
     }
@@ -174,12 +247,54 @@ forge ShellLoop {
             consume_line();
             return CMD_ECHO;
         } else {
-            if second == ASCII_X {
+            if second == ASCII_C_UPPER {
                 consume_line();
-                return CMD_EXIT;
+                return CMD_ECHO;
             } else {
-                consume_line();
-                return CMD_UNKNOWN;
+                if second == ASCII_X {
+                    consume_line();
+                    return CMD_EXIT;
+                } else {
+                    if second == ASCII_X_UPPER {
+                        consume_line();
+                        return CMD_EXIT;
+                    } else {
+                        if second == ASCII_D {
+                            let third = getchar();
+                            if third == ASCII_X {
+                                consume_line();
+                                return CMD_EDX;
+                            } else {
+                                if third == ASCII_X_UPPER {
+                                    consume_line();
+                                    return CMD_EDX;
+                                } else {
+                                    consume_line();
+                                    return CMD_UNKNOWN;
+                                }
+                            }
+                        } else {
+                            if second == ASCII_D_UPPER {
+                                let third_u = getchar();
+                                if third_u == ASCII_X {
+                                    consume_line();
+                                    return CMD_EDX;
+                                } else {
+                                    if third_u == ASCII_X_UPPER {
+                                        consume_line();
+                                        return CMD_EDX;
+                                    } else {
+                                        consume_line();
+                                        return CMD_UNKNOWN;
+                                    }
+                                }
+                            } else {
+                                consume_line();
+                                return CMD_UNKNOWN;
+                            }
+                        }
+                    }
+                }
             }
         }
     }
@@ -187,27 +302,19 @@ forge ShellLoop {
     proc K::consume_line() -> UInt32 {
         let ch = getchar();
         if ch == ASCII_NUL {
-            return 0;
+            return ERR_OK;
         } else {
             if ch == ASCII_LF {
-                return 0;
+                return ERR_OK;
             } else {
                 if ch == ASCII_CR {
-                    return 0;
+                    return ERR_OK;
                 } else {
                     return consume_line();
                 }
             }
         }
     }
-    
-    
-    
-    
-    
-    
-    
-    
 }
 
 

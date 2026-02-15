@@ -10,20 +10,21 @@ forge BuiltinCatErrors {
 }
 
 forge BuiltinCat {
-    
+
     const FLAG_NUMBER: UInt32 = 1;
     const FLAG_SHOW_TABS: UInt32 = 2;
     const FLAG_SHOW_ENDS: UInt32 = 4;
-    
+    const READ_SIZE: UInt32 = 1024;
+
     proc K::run(path: UInt64, flags: UInt32) -> UInt32 {
         let read_result = read_file(path);
         if read_result == ERR_OK {
-            return print_content(path, 1024);
+            return print_content(path, READ_SIZE);
         } else {
             return read_result;
         }
     }
-    
+
     proc K::read_file(path: UInt64) -> UInt32 {
         if path == 0 {
             return ERR_NOT_FOUND;
@@ -32,33 +33,32 @@ forge BuiltinCat {
             if fd == 0 {
                 return ERR_NOT_FOUND;
             } else {
-                read(fd, 0, 1024);
-                close(fd);
-                return ERR_OK;
+                read(fd, path, READ_SIZE);
+                let close_result = close(fd);
+                if close_result == ERR_OK {
+                    return ERR_OK;
+                } else {
+                    return ERR_READ_FAILED;
+                }
             }
         }
     }
-    
+
     proc K::print_content(buffer: UInt64, size: UInt32) -> UInt32 {
-        if size == 0 {
-            return ERR_OK;
+        if buffer == 0 {
+            return ERR_NOT_FOUND;
         } else {
-            puts(buffer);
-            putchar(10);
-            return ERR_OK;
+            if size == 0 {
+                return ERR_OK;
+            } else {
+                puts(buffer);
+                putchar(10);
+                return ERR_OK;
+            }
         }
     }
 
     proc K::exec_cat(path: UInt64, flags: UInt32) -> UInt32 {
         return run(path, flags);
     }
-    
-    
-    
-    
-    
-    
 }
-
-
-

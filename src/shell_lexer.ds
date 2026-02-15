@@ -9,17 +9,21 @@ forge ShellLexerErrors {
 }
 
 forge ShellLexer {
-    
+
     const TOKEN_WORD: UInt32 = 1;
     const TOKEN_PIPE: UInt32 = 2;
     const TOKEN_REDIR_IN: UInt32 = 3;
     const TOKEN_REDIR_OUT: UInt32 = 4;
     const TOKEN_REDIR_APPEND: UInt32 = 5;
     const TOKEN_EOF: UInt32 = 0;
-    
+
+    const ASCII_PIPE: UInt64 = 124;
+    const ASCII_REDIR_IN: UInt64 = 60;
+    const ASCII_REDIR_OUT: UInt64 = 62;
+
     const MAX_TOKEN_LEN: UInt32 = 64;
     const MAX_TOKENS: UInt32 = 32;
-    
+
     proc K::init(input: UInt64) -> UInt32 {
         if input == 0 {
             return ERR_EOF;
@@ -27,44 +31,49 @@ forge ShellLexer {
             return ERR_OK;
         }
     }
-    
+
+    proc K::classify_token_value(value: UInt64) -> UInt32 {
+        if value == 0 {
+            return TOKEN_EOF;
+        } else {
+            if value == ASCII_PIPE {
+                return TOKEN_PIPE;
+            } else {
+                if value == ASCII_REDIR_IN {
+                    return TOKEN_REDIR_IN;
+                } else {
+                    if value == ASCII_REDIR_OUT {
+                        return TOKEN_REDIR_OUT;
+                    } else {
+                        return TOKEN_WORD;
+                    }
+                }
+            }
+        }
+    }
+
     proc K::next_token() -> UInt32 {
-        return TOKEN_WORD;
+        return TOKEN_EOF;
     }
-    
+
     proc K::get_token_value() -> UInt64 {
-        return 0;
+        return MAX_TOKENS;
     }
-    
+
     proc K::peek_token() -> UInt32 {
-        return TOKEN_WORD;
+        return next_token();
     }
-    
+
     proc K::reset() -> UInt32 {
         return ERR_OK;
     }
-    
+
     proc K::tokenize(input: UInt64, output: UInt64) -> UInt32 {
         let init_result = init(input);
         if init_result == ERR_OK {
-            return next_token();
+            return classify_token_value(input);
         } else {
             return init_result;
         }
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
 }
-
-
-

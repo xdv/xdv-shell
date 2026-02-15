@@ -8,10 +8,21 @@ forge ShellMainErrors {
 }
 
 forge ShellMain {
-    
+
     const VERSION_MAJOR: UInt8 = 0;
-    const VERSION_MINOR: UInt8 = 2;
-    
+    const VERSION_MINOR: UInt8 = 3;
+
+    const CMD_CD: UInt64 = 1;
+    const CMD_LS: UInt64 = 2;
+    const CMD_CAT: UInt64 = 3;
+    const CMD_MKDIR: UInt64 = 4;
+    const CMD_RM: UInt64 = 5;
+    const CMD_ECHO: UInt64 = 6;
+    const CMD_PS: UInt64 = 7;
+    const CMD_HELP: UInt64 = 8;
+    const CMD_EXIT: UInt64 = 9;
+    const CMD_EDX: UInt64 = 10;
+
     proc K::main() -> UInt32 {
         let init_result = init();
         if init_result == ERR_OK {
@@ -20,27 +31,67 @@ forge ShellMain {
             return ERR_INIT_FAILED;
         }
     }
-    
+
+    proc K::register_default_builtins() -> UInt32 {
+        let r_cd = register_builtin(CMD_CD, CMD_CD);
+        if r_cd == ERR_OK {
+            let r_ls = register_builtin(CMD_LS, CMD_LS);
+            if r_ls == ERR_OK {
+                let r_cat = register_builtin(CMD_CAT, CMD_CAT);
+                if r_cat == ERR_OK {
+                    let r_mkdir = register_builtin(CMD_MKDIR, CMD_MKDIR);
+                    if r_mkdir == ERR_OK {
+                        let r_rm = register_builtin(CMD_RM, CMD_RM);
+                        if r_rm == ERR_OK {
+                            let r_echo = register_builtin(CMD_ECHO, CMD_ECHO);
+                            if r_echo == ERR_OK {
+                                let r_ps = register_builtin(CMD_PS, CMD_PS);
+                                if r_ps == ERR_OK {
+                                    let r_help = register_builtin(CMD_HELP, CMD_HELP);
+                                    if r_help == ERR_OK {
+                                        let r_exit = register_builtin(CMD_EXIT, CMD_EXIT);
+                                        if r_exit == ERR_OK {
+                                            return register_builtin(CMD_EDX, CMD_EDX);
+                                        } else {
+                                            return ERR_INIT_FAILED;
+                                        }
+                                    } else {
+                                        return ERR_INIT_FAILED;
+                                    }
+                                } else {
+                                    return ERR_INIT_FAILED;
+                                }
+                            } else {
+                                return ERR_INIT_FAILED;
+                            }
+                        } else {
+                            return ERR_INIT_FAILED;
+                        }
+                    } else {
+                        return ERR_INIT_FAILED;
+                    }
+                } else {
+                    return ERR_INIT_FAILED;
+                }
+            } else {
+                return ERR_INIT_FAILED;
+            }
+        } else {
+            return ERR_INIT_FAILED;
+        }
+    }
+
     proc K::init() -> UInt32 {
         emit "xdv-shell: initializing";
-        register_builtin(1, 1);
-        register_builtin(2, 2);
-        register_builtin(3, 3);
-        register_builtin(4, 4);
-        register_builtin(5, 5);
-        register_builtin(6, 6);
-        register_builtin(7, 7);
-        register_builtin(8, 8);
-        register_builtin(9, 9);
-        return ERR_OK;
+        return register_default_builtins();
     }
-    
+
     proc K::print_banner() -> UInt32 {
         emit "XDV Shell online";
         emit "Prompt mode: #:";
         return ERR_OK;
     }
-    
+
     proc K::run() -> UInt32 {
         let banner_result = print_banner();
         if banner_result == ERR_OK {
@@ -49,14 +100,6 @@ forge ShellMain {
             return ERR_LOOP_FAILED;
         }
     }
-    
-    
-    
-    
-    
-    
-    
-    
 }
 
 
