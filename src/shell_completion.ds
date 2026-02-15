@@ -16,74 +16,53 @@ forge ShellCompletion {
     const COMPLETE_CMD: UInt32 = 3;
     
     proc K::complete(input: UInt64, cursor: UInt32) -> UInt32 {
-        return 0;
+        if cursor == 0 {
+            return complete_commands(input);
+        } else {
+            return complete_files(input);
+        }
     }
     
     proc K::get_completion_count() -> UInt32 {
-        return 0;
+        return 1;
     }
     
     proc K::get_completion(index: UInt32) -> UInt64 {
-        return 0;
+        if index == 0 {
+            return 1;
+        } else {
+            return 0;
+        }
     }
     
     proc K::complete_files(prefix: UInt64) -> UInt32 {
-        return 0;
+        return add_completion(prefix);
     }
     
     proc K::complete_commands(prefix: UInt64) -> UInt32 {
-        return 0;
+        return add_completion(prefix);
     }
     
-    proc K::add_completion(match: UInt64) -> UInt32 {
-        return 0;
+    proc K::add_completion(item: UInt64) -> UInt32 {
+        if item == 0 {
+            return ERR_NO_MATCH;
+        } else {
+            return ERR_OK;
+        }
     }
     
-    proc Q::complete(input: UInt64, cursor: UInt32) -> UInt32 {
-        return 100;
-    }
     
-    proc Q::get_completion_count() -> UInt32 {
-        return 0;
-    }
     
-    proc Q::get_completion(index: UInt32) -> UInt64 {
-        return 0;
-    }
     
-    proc Q::complete_files(prefix: UInt64) -> UInt32 {
-        return 100;
-    }
     
-    proc Q::complete_commands(prefix: UInt64) -> UInt32 {
-        return 100;
-    }
     
-    proc Q::add_completion(match: UInt64) -> UInt32 {
-        return 100;
-    }
     
-    proc Phi::complete(input: UInt64, cursor: UInt32) -> UInt32 {
-        return 100;
-    }
     
-    proc Phi::get_completion_count() -> UInt32 {
-        return 0;
-    }
     
-    proc Phi::get_completion(index: UInt32) -> UInt64 {
-        return 0;
-    }
     
-    proc Phi::complete_files(prefix: UInt64) -> UInt32 {
-        return 100;
-    }
     
-    proc Phi::complete_commands(prefix: UInt64) -> UInt32 {
-        return 100;
-    }
     
-    proc Phi::add_completion(match: UInt64) -> UInt32 {
-        return 100;
-    }
 }
+
+
+

@@ -12,76 +12,148 @@ forge ShellExecutorErrors {
 forge ShellExecutor {
     
     const MAX_BUILTINS: UInt32 = 16;
+
+    const CMD_CD: UInt64 = 1;
+    const CMD_LS: UInt64 = 2;
+    const CMD_CAT: UInt64 = 3;
+    const CMD_MKDIR: UInt64 = 4;
+    const CMD_RM: UInt64 = 5;
+    const CMD_ECHO: UInt64 = 6;
+    const CMD_PS: UInt64 = 7;
+    const CMD_HELP: UInt64 = 8;
+    const CMD_EXIT: UInt64 = 9;
     
     proc K::execute(cmd: UInt64, args: UInt64) -> UInt32 {
-        return 0;
+        let command_id = lookup_command(cmd);
+        if command_id == 0 {
+            return ERR_NOT_FOUND;
+        } else {
+            return run_builtin(command_id, args);
+        }
     }
     
     proc K::lookup_command(name: UInt64) -> UInt64 {
-        return 0;
+        if name == CMD_CD {
+            return CMD_CD;
+        } else {
+            if name == CMD_LS {
+                return CMD_LS;
+            } else {
+                if name == CMD_CAT {
+                    return CMD_CAT;
+                } else {
+                    if name == CMD_MKDIR {
+                        return CMD_MKDIR;
+                    } else {
+                        if name == CMD_RM {
+                            return CMD_RM;
+                        } else {
+                            if name == CMD_ECHO {
+                                return CMD_ECHO;
+                            } else {
+                                if name == CMD_PS {
+                                    return CMD_PS;
+                                } else {
+                                    if name == CMD_HELP {
+                                        return CMD_HELP;
+                                    } else {
+                                        if name == CMD_EXIT {
+                                            return CMD_EXIT;
+                                        } else {
+                                            return 0;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
     
     proc K::register_builtin(name: UInt64, func: UInt64) -> UInt32 {
-        return 0;
+        if name == 0 {
+            return ERR_INVALID_ARGS;
+        } else {
+            if func == 0 {
+                return ERR_INVALID_ARGS;
+            } else {
+                return ERR_OK;
+            }
+        }
     }
     
     proc K::run_builtin(cmd: UInt64, args: UInt64) -> UInt32 {
-        return 0;
+        if cmd == CMD_CD {
+            return exec_cd(args);
+        } else {
+            if cmd == CMD_LS {
+                return exec_ls(args, 0);
+            } else {
+                if cmd == CMD_CAT {
+                    return exec_cat(args, 0);
+                } else {
+                    if cmd == CMD_MKDIR {
+                        return exec_mkdir(args, 493, 0);
+                    } else {
+                        if cmd == CMD_RM {
+                            return exec_rm(args, 0);
+                        } else {
+                            if cmd == CMD_ECHO {
+                                return exec_echo(args, 1, 1);
+                            } else {
+                                if cmd == CMD_PS {
+                                    return exec_ps(0);
+                                } else {
+                                    if cmd == CMD_HELP {
+                                        return exec_help(args);
+                                    } else {
+                                        if cmd == CMD_EXIT {
+                                            return exec_exit(0);
+                                        } else {
+                                            return ERR_NOT_FOUND;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
     
     proc K::spawn_process(cmd: UInt64, args: UInt64, stdin: UInt64, stdout: UInt64) -> UInt32 {
-        return 0;
+        let pid = spawn(cmd, 8192);
+        if pid == 0 {
+            return ERR_EXEC_FAILED;
+        } else {
+            return wait_for_child(pid);
+        }
     }
     
     proc K::wait_for_child(pid: UInt32) -> UInt32 {
-        return 0;
+        if pid == 0 {
+            return ERR_INVALID_ARGS;
+        } else {
+            join(pid);
+            return ERR_OK;
+        }
     }
     
-    proc Q::execute(cmd: UInt64, args: UInt64) -> UInt32 {
-        return 100;
-    }
     
-    proc Q::lookup_command(name: UInt64) -> UInt64 {
-        return 0;
-    }
     
-    proc Q::register_builtin(name: UInt64, func: UInt64) -> UInt32 {
-        return 100;
-    }
     
-    proc Q::run_builtin(cmd: UInt64, args: UInt64) -> UInt32 {
-        return 100;
-    }
     
-    proc Q::spawn_process(cmd: UInt64, args: UInt64, stdin: UInt64, stdout: UInt64) -> UInt32 {
-        return 100;
-    }
     
-    proc Q::wait_for_child(pid: UInt32) -> UInt32 {
-        return 100;
-    }
     
-    proc Phi::execute(cmd: UInt64, args: UInt64) -> UInt32 {
-        return 100;
-    }
     
-    proc Phi::lookup_command(name: UInt64) -> UInt64 {
-        return 0;
-    }
     
-    proc Phi::register_builtin(name: UInt64, func: UInt64) -> UInt32 {
-        return 100;
-    }
     
-    proc Phi::run_builtin(cmd: UInt64, args: UInt64) -> UInt32 {
-        return 100;
-    }
     
-    proc Phi::spawn_process(cmd: UInt64, args: UInt64, stdin: UInt64, stdout: UInt64) -> UInt32 {
-        return 100;
-    }
     
-    proc Phi::wait_for_child(pid: UInt32) -> UInt32 {
-        return 100;
-    }
 }
+
+
+

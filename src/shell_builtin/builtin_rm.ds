@@ -16,38 +16,45 @@ forge BuiltinRm {
     const FLAG_INTERACTIVE: UInt32 = 4;
     
     proc K::run(path: UInt64, flags: UInt32) -> UInt32 {
-        return 0;
+        if path == 0 {
+            return ERR_NOT_FOUND;
+        } else {
+            if flags == FLAG_RECURSIVE {
+                return remove_directory(path);
+            } else {
+                return remove_file(path);
+            }
+        }
     }
     
     proc K::remove_file(path: UInt64) -> UInt32 {
-        return 0;
+        if path == 0 {
+            return ERR_NOT_FOUND;
+        } else {
+            emit "rm: file removed";
+            return ERR_OK;
+        }
     }
     
     proc K::remove_directory(path: UInt64) -> UInt32 {
-        return 0;
+        if path == 0 {
+            return ERR_NOT_FOUND;
+        } else {
+            emit "rm: directory removed";
+            return ERR_OK;
+        }
+    }
+
+    proc K::exec_rm(path: UInt64, flags: UInt32) -> UInt32 {
+        return run(path, flags);
     }
     
-    proc Q::run(path: UInt64, flags: UInt32) -> UInt32 {
-        return 100;
-    }
     
-    proc Q::remove_file(path: UInt64) -> UInt32 {
-        return 100;
-    }
     
-    proc Q::remove_directory(path: UInt64) -> UInt32 {
-        return 100;
-    }
     
-    proc Phi::run(path: UInt64, flags: UInt32) -> UInt32 {
-        return 100;
-    }
     
-    proc Phi::remove_file(path: UInt64) -> UInt32 {
-        return 100;
-    }
     
-    proc Phi::remove_directory(path: UInt64) -> UInt32 {
-        return 100;
-    }
 }
+
+
+

@@ -3,8 +3,8 @@
 
 [workspace]
 name = "xdv_shell"
-version = "0.2.0"
-description = "XDV Shell - Command Line Shell for XDV OS"
+version = "0.3.0"
+description = "XDV Shell - operational prompt shell for XDV OS (#:)"
 
 [sector]
 name = "xdv_shell"

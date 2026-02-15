@@ -14,52 +14,201 @@ forge ShellLoop {
     const MAX_LINE: UInt32 = 256;
     const RUNNING: UInt32 = 1;
     const STOPPED: UInt32 = 0;
+
+    const MAX_CYCLES: UInt32 = 4096;
+
+    const CMD_NONE: UInt64 = 0;
+    const CMD_CD: UInt64 = 1;
+    const CMD_LS: UInt64 = 2;
+    const CMD_CAT: UInt64 = 3;
+    const CMD_MKDIR: UInt64 = 4;
+    const CMD_RM: UInt64 = 5;
+    const CMD_ECHO: UInt64 = 6;
+    const CMD_PS: UInt64 = 7;
+    const CMD_HELP: UInt64 = 8;
+    const CMD_EXIT: UInt64 = 9;
+    const CMD_UNKNOWN: UInt64 = 255;
+
+    const ASCII_NUL: UInt32 = 0;
+    const ASCII_LF: UInt32 = 10;
+    const ASCII_CR: UInt32 = 13;
+    const ASCII_C: UInt32 = 99;
+    const ASCII_D: UInt32 = 100;
+    const ASCII_A: UInt32 = 97;
+    const ASCII_L: UInt32 = 108;
+    const ASCII_M: UInt32 = 109;
+    const ASCII_R: UInt32 = 114;
+    const ASCII_E: UInt32 = 101;
+    const ASCII_X: UInt32 = 120;
+    const ASCII_P: UInt32 = 112;
+    const ASCII_H: UInt32 = 104;
     
     proc K::run_loop() -> UInt32 {
-        return 0;
+        emit "xdv-shell: interactive loop ready";
+        return run_cycles(MAX_CYCLES);
+    }
+
+    proc K::run_cycles(remaining: UInt32) -> UInt32 {
+        if remaining == 0 {
+            return ERR_OK;
+        } else {
+            render_prompt();
+            let command_code = read_command_code();
+            let state = process_line(command_code);
+            if state == STOPPED {
+                return ERR_OK;
+            } else {
+                return run_cycles(remaining - 1);
+            }
+        }
     }
     
     proc K::process_line(line: UInt64) -> UInt32 {
-        return 0;
+        if line == CMD_NONE {
+            return RUNNING;
+        } else {
+            if line == CMD_UNKNOWN {
+                print_error(0);
+                return RUNNING;
+            } else {
+                init(line);
+                tokenize(line, 0);
+                parse(line, 1);
+                let exec_result = execute(line, 0);
+                if line == CMD_EXIT {
+                    handle_exit(exec_result);
+                    return STOPPED;
+                } else {
+                    return RUNNING;
+                }
+            }
+        }
     }
     
     proc K::handle_exit(code: UInt32) -> UInt32 {
-        return 0;
+        emit "xdv-shell: exit requested";
+        cleanup();
+        return code;
     }
     
     proc K::print_error(msg: UInt64) -> UInt32 {
-        return 0;
+        emit "xdv-shell: unknown command";
+        if msg == 0 {
+            putchar(10);
+        } else {
+            puts(msg);
+        }
+        return ERR_UNKNOWN_COMMAND;
+    }
+
+    proc K::read_command_code() -> UInt64 {
+        let first = getchar();
+        if first == ASCII_NUL {
+            return CMD_NONE;
+        } else {
+            if first == ASCII_LF {
+                return CMD_NONE;
+            } else {
+                if first == ASCII_CR {
+                    return CMD_NONE;
+                } else {
+                    if first == ASCII_C {
+                        return decode_c_command();
+                    } else {
+                        if first == ASCII_L {
+                            consume_line();
+                            return CMD_LS;
+                        } else {
+                            if first == ASCII_M {
+                                consume_line();
+                                return CMD_MKDIR;
+                            } else {
+                                if first == ASCII_R {
+                                    consume_line();
+                                    return CMD_RM;
+                                } else {
+                                    if first == ASCII_E {
+                                        return decode_e_command();
+                                    } else {
+                                        if first == ASCII_P {
+                                            consume_line();
+                                            return CMD_PS;
+                                        } else {
+                                            if first == ASCII_H {
+                                                consume_line();
+                                                return CMD_HELP;
+                                            } else {
+                                                consume_line();
+                                                return CMD_UNKNOWN;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    proc K::decode_c_command() -> UInt64 {
+        let second = getchar();
+        if second == ASCII_D {
+            consume_line();
+            return CMD_CD;
+        } else {
+            if second == ASCII_A {
+                consume_line();
+                return CMD_CAT;
+            } else {
+                consume_line();
+                return CMD_UNKNOWN;
+            }
+        }
+    }
+
+    proc K::decode_e_command() -> UInt64 {
+        let second = getchar();
+        if second == ASCII_C {
+            consume_line();
+            return CMD_ECHO;
+        } else {
+            if second == ASCII_X {
+                consume_line();
+                return CMD_EXIT;
+            } else {
+                consume_line();
+                return CMD_UNKNOWN;
+            }
+        }
+    }
+
+    proc K::consume_line() -> UInt32 {
+        let ch = getchar();
+        if ch == ASCII_NUL {
+            return 0;
+        } else {
+            if ch == ASCII_LF {
+                return 0;
+            } else {
+                if ch == ASCII_CR {
+                    return 0;
+                } else {
+                    return consume_line();
+                }
+            }
+        }
     }
     
-    proc Q::run_loop() -> UInt32 {
-        return 100;
-    }
     
-    proc Q::process_line(line: UInt64) -> UInt32 {
-        return 100;
-    }
     
-    proc Q::handle_exit(code: UInt32) -> UInt32 {
-        return 100;
-    }
     
-    proc Q::print_error(msg: UInt64) -> UInt32 {
-        return 100;
-    }
     
-    proc Phi::run_loop() -> UInt32 {
-        return 100;
-    }
     
-    proc Phi::process_line(line: UInt64) -> UInt32 {
-        return 100;
-    }
     
-    proc Phi::handle_exit(code: UInt32) -> UInt32 {
-        return 100;
-    }
     
-    proc Phi::print_error(msg: UInt64) -> UInt32 {
-        return 100;
-    }
 }
+
+
+

@@ -21,11 +21,15 @@ forge ShellLexer {
     const MAX_TOKENS: UInt32 = 32;
     
     proc K::init(input: UInt64) -> UInt32 {
-        return 0;
+        if input == 0 {
+            return ERR_EOF;
+        } else {
+            return ERR_OK;
+        }
     }
     
     proc K::next_token() -> UInt32 {
-        return 0;
+        return TOKEN_WORD;
     }
     
     proc K::get_token_value() -> UInt64 {
@@ -33,62 +37,34 @@ forge ShellLexer {
     }
     
     proc K::peek_token() -> UInt32 {
-        return 0;
+        return TOKEN_WORD;
     }
     
     proc K::reset() -> UInt32 {
-        return 0;
+        return ERR_OK;
     }
     
     proc K::tokenize(input: UInt64, output: UInt64) -> UInt32 {
-        return 0;
+        let init_result = init(input);
+        if init_result == ERR_OK {
+            return next_token();
+        } else {
+            return init_result;
+        }
     }
     
-    proc Q::init(input: UInt64) -> UInt32 {
-        return 100;
-    }
     
-    proc Q::next_token() -> UInt32 {
-        return 100;
-    }
     
-    proc Q::get_token_value() -> UInt64 {
-        return 0;
-    }
     
-    proc Q::peek_token() -> UInt32 {
-        return 100;
-    }
     
-    proc Q::reset() -> UInt32 {
-        return 100;
-    }
     
-    proc Q::tokenize(input: UInt64, output: UInt64) -> UInt32 {
-        return 100;
-    }
     
-    proc Phi::init(input: UInt64) -> UInt32 {
-        return 100;
-    }
     
-    proc Phi::next_token() -> UInt32 {
-        return 100;
-    }
     
-    proc Phi::get_token_value() -> UInt64 {
-        return 0;
-    }
     
-    proc Phi::peek_token() -> UInt32 {
-        return 100;
-    }
     
-    proc Phi::reset() -> UInt32 {
-        return 100;
-    }
     
-    proc Phi::tokenize(input: UInt64, output: UInt64) -> UInt32 {
-        return 100;
-    }
 }
+
+
+

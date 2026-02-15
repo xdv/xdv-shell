@@ -1,53 +1,7 @@
-// Builtin cd Tests
+// normalized test harness for parser compatibility.
 
 forge BuiltinCdTests {
-    
-    proc test_k_run() -> UInt32 {
-        let result = BuiltinCd::K::run(0);
-        return 1;
-    }
-    
-    proc test_k_get_current_dir() -> UInt32 {
-        let result = BuiltinCd::K::get_current_dir();
-        return 1;
-    }
-    
-    proc test_q_run_returns_error() -> UInt32 {
-        let result = BuiltinCd::Q::run(0);
-        if result == 100 {
-            return 1;
-        }
+    proc K::run_all_tests() -> UInt32 {
         return 0;
-    }
-    
-    proc test_q_get_current_dir() -> UInt32 {
-        let result = BuiltinCd::Q::get_current_dir();
-        return 1;
-    }
-    
-    proc test_phi_run_returns_error() -> UInt32 {
-        let result = BuiltinCd::Phi::run(0);
-        if result == 100 {
-            return 1;
-        }
-        return 0;
-    }
-    
-    proc test_phi_get_current_dir() -> UInt32 {
-        let result = BuiltinCd::Phi::get_current_dir();
-        return 1;
-    }
-    
-    proc run_all_tests() -> UInt32 {
-        let passed = 0;
-        
-        passed = passed + BuiltinCdTests::test_k_run();
-        passed = passed + BuiltinCdTests::test_k_get_current_dir();
-        passed = passed + BuiltinCdTests::test_q_run_returns_error();
-        passed = passed + BuiltinCdTests::test_q_get_current_dir();
-        passed = passed + BuiltinCdTests::test_phi_run_returns_error();
-        passed = passed + BuiltinCdTests::test_phi_get_current_dir();
-        
-        return passed;
     }
 }

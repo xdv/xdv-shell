@@ -12,38 +12,43 @@ forge BuiltinEcho {
     const FLAG_ESCAPE: UInt32 = 2;
     
     proc K::run(args: UInt64, count: UInt32, flags: UInt32) -> UInt32 {
-        return 0;
+        if count == 0 {
+            return ERR_INVALID_ARGS;
+        } else {
+            print_args(args, count);
+            if flags == FLAG_NEWLINE {
+                putchar(10);
+            } else {
+                putchar(32);
+            }
+            return ERR_OK;
+        }
     }
     
     proc K::print_args(args: UInt64, count: UInt32) -> UInt32 {
-        return 0;
+        if args == 0 {
+            return ERR_INVALID_ARGS;
+        } else {
+            let expanded = expand_vars(args);
+            puts(expanded);
+            return ERR_OK;
+        }
     }
     
     proc K::expand_vars(input: UInt64) -> UInt64 {
-        return 0;
+        return input;
+    }
+
+    proc K::exec_echo(args: UInt64, count: UInt32, flags: UInt32) -> UInt32 {
+        return run(args, count, flags);
     }
     
-    proc Q::run(args: UInt64, count: UInt32, flags: UInt32) -> UInt32 {
-        return 100;
-    }
     
-    proc Q::print_args(args: UInt64, count: UInt32) -> UInt32 {
-        return 100;
-    }
     
-    proc Q::expand_vars(input: UInt64) -> UInt64 {
-        return 0;
-    }
     
-    proc Phi::run(args: UInt64, count: UInt32, flags: UInt32) -> UInt32 {
-        return 100;
-    }
     
-    proc Phi::print_args(args: UInt64, count: UInt32) -> UInt32 {
-        return 100;
-    }
     
-    proc Phi::expand_vars(input: UInt64) -> UInt64 {
-        return 0;
-    }
 }
+
+
+

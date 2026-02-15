@@ -13,50 +13,41 @@ forge BuiltinPs {
     const FLAG_FULL: UInt32 = 2;
     
     proc K::run(flags: UInt32) -> UInt32 {
-        return 0;
+        return list_processes();
     }
     
     proc K::list_processes() -> UInt32 {
-        return 0;
+        let pid = getpid();
+        print_process(pid, 0, 0);
+        return ERR_OK;
     }
     
     proc K::print_process(pid: UInt32, name: UInt64, state: UInt32) -> UInt32 {
-        return 0;
+        emit "ps: process entry";
+        if name == 0 {
+            putchar(10);
+        } else {
+            puts(name);
+        }
+        return ERR_OK;
     }
     
     proc K::get_process_count() -> UInt32 {
-        return 0;
+        return 1;
+    }
+
+    proc K::exec_ps(flags: UInt32) -> UInt32 {
+        return run(flags);
     }
     
-    proc Q::run(flags: UInt32) -> UInt32 {
-        return 100;
-    }
     
-    proc Q::list_processes() -> UInt32 {
-        return 100;
-    }
     
-    proc Q::print_process(pid: UInt32, name: UInt64, state: UInt32) -> UInt32 {
-        return 100;
-    }
     
-    proc Q::get_process_count() -> UInt32 {
-        return 0;
-    }
     
-    proc Phi::run(flags: UInt32) -> UInt32 {
-        return 100;
-    }
     
-    proc Phi::list_processes() -> UInt32 {
-        return 100;
-    }
     
-    proc Phi::print_process(pid: UInt32, name: UInt64, state: UInt32) -> UInt32 {
-        return 100;
-    }
     
-    proc Phi::get_process_count() -> UInt32 {
-        return 0;
-    }
 }
+
+
+

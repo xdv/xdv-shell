@@ -11,38 +11,30 @@ forge BuiltinExit {
     const DEFAULT_EXIT_CODE: UInt32 = 0;
     
     proc K::run(code: UInt32) -> UInt32 {
-        return 0;
+        cleanup();
+        return code;
     }
     
     proc K::get_exit_code() -> UInt32 {
-        return 0;
+        return DEFAULT_EXIT_CODE;
     }
     
     proc K::cleanup() -> UInt32 {
-        return 0;
+        emit "exit: cleaning up shell state";
+        yield();
+        return ERR_OK;
+    }
+
+    proc K::exec_exit(code: UInt32) -> UInt32 {
+        return run(code);
     }
     
-    proc Q::run(code: UInt32) -> UInt32 {
-        return 100;
-    }
     
-    proc Q::get_exit_code() -> UInt32 {
-        return 0;
-    }
     
-    proc Q::cleanup() -> UInt32 {
-        return 100;
-    }
     
-    proc Phi::run(code: UInt32) -> UInt32 {
-        return 100;
-    }
     
-    proc Phi::get_exit_code() -> UInt32 {
-        return 0;
-    }
     
-    proc Phi::cleanup() -> UInt32 {
-        return 100;
-    }
 }
+
+
+

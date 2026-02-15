@@ -13,50 +13,51 @@ forge ShellMain {
     const VERSION_MINOR: UInt8 = 2;
     
     proc K::main() -> UInt32 {
-        return 0;
+        let init_result = init();
+        if init_result == ERR_OK {
+            return run();
+        } else {
+            return ERR_INIT_FAILED;
+        }
     }
     
     proc K::init() -> UInt32 {
-        return 0;
+        emit "xdv-shell: initializing";
+        register_builtin(1, 1);
+        register_builtin(2, 2);
+        register_builtin(3, 3);
+        register_builtin(4, 4);
+        register_builtin(5, 5);
+        register_builtin(6, 6);
+        register_builtin(7, 7);
+        register_builtin(8, 8);
+        register_builtin(9, 9);
+        return ERR_OK;
     }
     
     proc K::print_banner() -> UInt32 {
-        return 0;
+        emit "XDV Shell online";
+        emit "Prompt mode: #:";
+        return ERR_OK;
     }
     
     proc K::run() -> UInt32 {
-        return 0;
+        let banner_result = print_banner();
+        if banner_result == ERR_OK {
+            return run_loop();
+        } else {
+            return ERR_LOOP_FAILED;
+        }
     }
     
-    proc Q::main() -> UInt32 {
-        return 100;
-    }
     
-    proc Q::init() -> UInt32 {
-        return 100;
-    }
     
-    proc Q::print_banner() -> UInt32 {
-        return 100;
-    }
     
-    proc Q::run() -> UInt32 {
-        return 100;
-    }
     
-    proc Phi::main() -> UInt32 {
-        return 100;
-    }
     
-    proc Phi::init() -> UInt32 {
-        return 100;
-    }
     
-    proc Phi::print_banner() -> UInt32 {
-        return 100;
-    }
     
-    proc Phi::run() -> UInt32 {
-        return 100;
-    }
 }
+
+
+

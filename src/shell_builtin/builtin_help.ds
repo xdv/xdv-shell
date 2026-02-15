@@ -9,50 +9,41 @@ forge BuiltinHelpErrors {
 forge BuiltinHelp {
     
     proc K::run(topic: UInt64) -> UInt32 {
-        return 0;
+        if topic == 0 {
+            return print_commands();
+        } else {
+            return print_usage(topic);
+        }
     }
     
     proc K::print_commands() -> UInt32 {
-        return 0;
+        emit "Builtins: cd ls cat mkdir rm echo ps help exit";
+        return ERR_OK;
     }
     
     proc K::print_usage(cmd: UInt64) -> UInt32 {
-        return 0;
+        emit "Usage:";
+        puts(cmd);
+        putchar(10);
+        return ERR_OK;
     }
     
     proc K::get_command_count() -> UInt32 {
-        return 0;
+        return 9;
+    }
+
+    proc K::exec_help(topic: UInt64) -> UInt32 {
+        return run(topic);
     }
     
-    proc Q::run(topic: UInt64) -> UInt32 {
-        return 100;
-    }
     
-    proc Q::print_commands() -> UInt32 {
-        return 100;
-    }
     
-    proc Q::print_usage(cmd: UInt64) -> UInt32 {
-        return 100;
-    }
     
-    proc Q::get_command_count() -> UInt32 {
-        return 0;
-    }
     
-    proc Phi::run(topic: UInt64) -> UInt32 {
-        return 100;
-    }
     
-    proc Phi::print_commands() -> UInt32 {
-        return 100;
-    }
     
-    proc Phi::print_usage(cmd: UInt64) -> UInt32 {
-        return 100;
-    }
     
-    proc Phi::get_command_count() -> UInt32 {
-        return 0;
-    }
 }
+
+
+
