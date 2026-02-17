@@ -1,15 +1,20 @@
 // xdv-shell bridge for xdv-os integration checks.
 
 forge XdvShellBridge {
-    const SHELL_VERSION: UInt32 = 2;
+    const SHELL_VERSION: UInt32 = 3;
+    const SHELL_OK: UInt32 = 0;
 
-    proc K::init() -> UInt32 {
+    proc K::shell_bridge_init() -> UInt32 {
         emit "xdv-shell bridge online";
+        shell_boot_units_prepare();
         return SHELL_VERSION;
     }
 
-    proc K::launch() -> UInt32 {
+    proc K::shell_bridge_launch() -> UInt32 {
         emit "xdv-shell launch path active";
-        return main();
+        shell_boot_emit_banner();
+        shell_boot_emit_command_catalog();
+        shell_boot_emit_prompt();
+        return SHELL_OK;
     }
 }

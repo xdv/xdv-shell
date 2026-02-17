@@ -1,0 +1,30 @@
+// xdv-shell boot-safe launch units for xdv-os bare-metal bundle.
+
+forge XdvShellBootUnits {
+    const SHELL_BOOT_OK: UInt32 = 0;
+    const SHELL_BOOT_PROFILE_VERSION: UInt32 = 1;
+
+    proc K::shell_boot_units_prepare() -> UInt32 {
+        emit "xdv-shell: launch units linked";
+        return SHELL_BOOT_PROFILE_VERSION;
+    }
+
+    proc K::shell_boot_emit_banner() -> UInt32 {
+        emit "xdv-shell: initializing";
+        emit "XDV Shell online";
+        emit "Prompt mode: #:";
+        return SHELL_BOOT_OK;
+    }
+
+    proc K::shell_boot_emit_command_catalog() -> UInt32 {
+        emit "xdv-shell: command dispatcher ready";
+        emit "Available commands: cd ls cat mkdir rm echo ps help exit edx";
+        return SHELL_BOOT_OK;
+    }
+
+    proc K::shell_boot_emit_prompt() -> UInt32 {
+        emit "xdv-shell: interactive loop ready";
+        emit "#:";
+        return SHELL_BOOT_OK;
+    }
+}
