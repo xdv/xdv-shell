@@ -1,4 +1,7 @@
-// Builtin help - Show Help
+// File: builtin_help.ds - This file is part of XDV
+// Copyright (c) 2026 Dust LLC, and Contributors
+// Description:
+//   Builtin help - Show Help
 
 forge BuiltinHelpErrors {
     const ERR_OK: UInt32 = 0;

@@ -1,4 +1,7 @@
-// normalized test harness for parser compatibility.
+// File: shell_parser_tests.ds - This file is part of XDV
+// Copyright (c) 2026 Dust LLC, and Contributors
+// Description:
+//   normalized test harness for parser compatibility.
 
 forge ShellParserTests {
     proc K::run_all_tests() -> UInt32 {

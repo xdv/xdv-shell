@@ -1,4 +1,7 @@
-// Shell Loop - Main Shell Loop
+// File: shell_loop.ds - This file is part of XDV
+// Copyright (c) 2026 Dust LLC, and Contributors
+// Description:
+//   Shell Loop - Main Shell Loop
 
 forge ShellLoopErrors {
     const ERR_OK: UInt32 = 0;

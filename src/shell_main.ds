@@ -1,4 +1,7 @@
-// Shell Main - Entry Point
+// File: shell_main.ds - This file is part of XDV
+// Copyright (c) 2026 Dust LLC, and Contributors
+// Description:
+//   Shell Main - Entry Point
 
 forge ShellMainErrors {
     const ERR_OK: UInt32 = 0;

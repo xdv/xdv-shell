@@ -1,4 +1,7 @@
-// Builtin mkdir - Make Directory
+// File: builtin_mkdir.ds - This file is part of XDV
+// Copyright (c) 2026 Dust LLC, and Contributors
+// Description:
+//   Builtin mkdir - Make Directory
 
 forge BuiltinMkdirErrors {
     const ERR_OK: UInt32 = 0;

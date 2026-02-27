@@ -1,4 +1,7 @@
-// Shell Completion - Tab Completion
+// File: shell_completion.ds - This file is part of XDV
+// Copyright (c) 2026 Dust LLC, and Contributors
+// Description:
+//   Shell Completion - Tab Completion
 
 forge ShellCompletionErrors {
     const ERR_OK: UInt32 = 0;

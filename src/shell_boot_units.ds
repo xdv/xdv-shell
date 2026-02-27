@@ -1,4 +1,7 @@
-// xdv-shell boot-safe launch units for xdv-os bare-metal bundle.
+// File: shell_boot_units.ds - This file is part of XDV
+// Copyright (c) 2026 Dust LLC, and Contributors
+// Description:
+//   xdv-shell boot-safe launch units for xdv-os bare-metal bundle.
 
 forge XdvShellBootUnits {
     const SHELL_BOOT_OK: UInt32 = 0;

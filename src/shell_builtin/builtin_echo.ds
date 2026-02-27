@@ -1,4 +1,7 @@
-// Builtin echo - Print Text
+// File: builtin_echo.ds - This file is part of XDV
+// Copyright (c) 2026 Dust LLC, and Contributors
+// Description:
+//   Builtin echo - Print Text
 
 forge BuiltinEchoErrors {
     const ERR_OK: UInt32 = 0;

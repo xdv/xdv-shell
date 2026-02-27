@@ -1,4 +1,7 @@
-// Builtin cd - Change Directory
+// File: builtin_cd.ds - This file is part of XDV
+// Copyright (c) 2026 Dust LLC, and Contributors
+// Description:
+//   Builtin cd - Change Directory
 
 forge BuiltinCdErrors {
     const ERR_OK: UInt32 = 0;

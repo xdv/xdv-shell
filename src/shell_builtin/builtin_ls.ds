@@ -1,4 +1,7 @@
-// Builtin ls - List Directory
+// File: builtin_ls.ds - This file is part of XDV
+// Copyright (c) 2026 Dust LLC, and Contributors
+// Description:
+//   Builtin ls - List Directory
 
 forge BuiltinLsErrors {
     const ERR_OK: UInt32 = 0;

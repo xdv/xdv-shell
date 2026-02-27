@@ -1,4 +1,7 @@
-// Shell Parser - Command Parser
+// File: shell_parser.ds - This file is part of XDV
+// Copyright (c) 2026 Dust LLC, and Contributors
+// Description:
+//   Shell Parser - Command Parser
 
 forge ShellParserErrors {
     const ERR_OK: UInt32 = 0;

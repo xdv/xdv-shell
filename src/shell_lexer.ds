@@ -1,4 +1,7 @@
-// Shell Lexer - Tokenizer
+// File: shell_lexer.ds - This file is part of XDV
+// Copyright (c) 2026 Dust LLC, and Contributors
+// Description:
+//   Shell Lexer - Tokenizer
 
 forge ShellLexerErrors {
     const ERR_OK: UInt32 = 0;

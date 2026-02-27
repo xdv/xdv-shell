@@ -1,4 +1,7 @@
-// Builtin ps - Process Status
+// File: builtin_ps.ds - This file is part of XDV
+// Copyright (c) 2026 Dust LLC, and Contributors
+// Description:
+//   Builtin ps - Process Status
 
 forge BuiltinPsErrors {
     const ERR_OK: UInt32 = 0;

@@ -1,4 +1,7 @@
-// Builtin cat - Display File Contents
+// File: builtin_cat.ds - This file is part of XDV
+// Copyright (c) 2026 Dust LLC, and Contributors
+// Description:
+//   Builtin cat - Display File Contents
 
 forge BuiltinCatErrors {
     const ERR_OK: UInt32 = 0;

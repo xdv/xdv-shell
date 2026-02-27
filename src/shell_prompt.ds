@@ -1,4 +1,7 @@
-// Shell Prompt - Prompt Generation
+// File: shell_prompt.ds - This file is part of XDV
+// Copyright (c) 2026 Dust LLC, and Contributors
+// Description:
+//   Shell Prompt - Prompt Generation
 
 forge ShellPromptErrors {
     const ERR_OK: UInt32 = 0;
