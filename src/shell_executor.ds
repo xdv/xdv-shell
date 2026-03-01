@@ -1,7 +1,7 @@
 // File: shell_executor.ds - This file is part of XDV
 // Copyright (c) 2026 Dust LLC, and Contributors
 // Description:
-//   Shell Executor - Command Execution
+//   Shell Executor - deterministic command execution and routing.
 
 forge ShellExecutorErrors {
     const ERR_OK: UInt32 = 0;
@@ -27,12 +27,74 @@ forge ShellExecutor {
     const CMD_EXIT: UInt64 = 9;
     const CMD_EDX: UInt64 = 10;
 
+    const CORE_STATUS_OK: UInt32 = 0;
+    const CORE_PROCESS_CURRENT_PID: UInt32 = 1;
+    const CORE_RUNTIME_MINIMUM_SET: UInt32 = 1;
+
+    const ROUTE_LOCAL_ONLY: UInt32 = 0;
+    const ROUTE_CORE_PROCESS: UInt32 = 1;
+    const ROUTE_CORE_RUNTIME_ADMIN: UInt32 = 2;
+
     proc K::execute(cmd: UInt64, args: UInt64) -> UInt32 {
         let command_id = lookup_command(cmd);
         if command_id == 0 {
-            return spawn_process(cmd, args, 0, 1);
+            return ERR_NOT_FOUND;
         } else {
-            return run_builtin(command_id, args);
+            let route_status = route_command_plane(command_id, args);
+            if route_status == ERR_OK {
+                return run_builtin(command_id, args);
+            } else {
+                return route_status;
+            }
+        }
+    }
+
+    // Route shell commands into runtime/core control surfaces where available.
+    proc K::route_command_plane(cmd: UInt64, args: UInt64) -> UInt32 {
+        let target = resolve_route_target(cmd);
+        if target == ROUTE_LOCAL_ONLY {
+            return ERR_OK;
+        } else {
+            if target == ROUTE_CORE_PROCESS {
+                return route_core_process();
+            } else {
+                if target == ROUTE_CORE_RUNTIME_ADMIN {
+                    return route_core_runtime_admin();
+                } else {
+                    return ERR_OK;
+                }
+            }
+        }
+    }
+
+    proc K::resolve_route_target(cmd: UInt64) -> UInt32 {
+        if cmd == CMD_PS {
+            return ROUTE_CORE_PROCESS;
+        } else {
+            if cmd == CMD_EDX {
+                return ROUTE_CORE_RUNTIME_ADMIN;
+            } else {
+                return ROUTE_LOCAL_ONLY;
+            }
+        }
+    }
+
+    proc K::route_core_process() -> UInt32 {
+        let core_status = core_process_command(CORE_PROCESS_CURRENT_PID, 1, 1, 8192, 1);
+        if core_status == CORE_STATUS_OK {
+            return ERR_OK;
+        } else {
+            // Best-effort routing: keep shell command available even if core route degrades.
+            return ERR_OK;
+        }
+    }
+
+    proc K::route_core_runtime_admin() -> UInt32 {
+        let runtime_status = core_runtime_admin_command(CORE_RUNTIME_MINIMUM_SET);
+        if runtime_status == CORE_STATUS_OK {
+            return ERR_OK;
+        } else {
+            return ERR_OK;
         }
     }
 
@@ -121,7 +183,7 @@ forge ShellExecutor {
                                             return exec_exit(0);
                                         } else {
                                             if cmd == CMD_EDX {
-                                                return spawn_process(cmd, args, 0, 1);
+                                                return spawn_external_process(cmd, args, 0, 1);
                                             } else {
                                                 return ERR_NOT_FOUND;
                                             }
@@ -136,11 +198,11 @@ forge ShellExecutor {
         }
     }
 
-    proc K::spawn_process(cmd: UInt64, args: UInt64, stdin: UInt64, stdout: UInt64) -> UInt32 {
+    proc K::spawn_external_process(cmd: UInt64, args: UInt64, stdin: UInt64, stdout: UInt64) -> UInt32 {
         if cmd == 0 {
             return ERR_INVALID_ARGS;
         } else {
-            let pid = spawn(cmd, 8192);
+            let pid = spawn_process(cmd, 8192);
             if pid == 0 {
                 return ERR_EXEC_FAILED;
             } else {
@@ -153,7 +215,7 @@ forge ShellExecutor {
         if pid == 0 {
             return ERR_INVALID_ARGS;
         } else {
-            let join_status = join(pid);
+            let join_status = join_process(pid);
             if join_status == 0 {
                 return ERR_EXEC_FAILED;
             } else {
@@ -162,6 +224,3 @@ forge ShellExecutor {
         }
     }
 }
-
-
-

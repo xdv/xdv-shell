@@ -1,10 +1,81 @@
 // File: shell_executor_tests.ds - This file is part of XDV
 // Copyright (c) 2026 Dust LLC, and Contributors
 // Description:
-//   normalized test harness for parser compatibility.
+//   Deterministic executor and routing behavior tests.
 
 forge ShellExecutorTests {
+    const TEST_PASS: UInt32 = 0;
+    const TEST_FAIL: UInt32 = 1;
+
+    const ERR_OK: UInt32 = 0;
+    const ERR_NOT_FOUND: UInt32 = 1;
+
+    const CMD_CD: UInt64 = 1;
+    const CMD_HELP: UInt64 = 8;
+    const CMD_PS: UInt64 = 7;
+    const CMD_EDX: UInt64 = 10;
+
+    proc K::expect_u32(actual: UInt32, expected: UInt32) -> UInt32 {
+        if actual == expected {
+            return TEST_PASS;
+        } else {
+            return TEST_FAIL;
+        }
+    }
+
+    proc K::expect_u64(actual: UInt64, expected: UInt64) -> UInt32 {
+        if actual == expected {
+            return TEST_PASS;
+        } else {
+            return TEST_FAIL;
+        }
+    }
+
+    proc K::combine(lhs: UInt32, rhs: UInt32) -> UInt32 {
+        if lhs == TEST_PASS {
+            return rhs;
+        } else {
+            return TEST_FAIL;
+        }
+    }
+
+    proc K::test_lookup_known_and_unknown() -> UInt32 {
+        let known = lookup_command(CMD_HELP);
+        let unknown = lookup_command(999);
+
+        let t1 = expect_u64(known, CMD_HELP);
+        let t2 = expect_u64(unknown, 0);
+        return combine(t1, t2);
+    }
+
+    proc K::test_route_ps_and_edx() -> UInt32 {
+        let ps = route_command_plane(CMD_PS, 0);
+        let edx = route_command_plane(CMD_EDX, 0);
+
+        let t1 = expect_u32(ps, ERR_OK);
+        let t2 = expect_u32(edx, ERR_OK);
+        return combine(t1, t2);
+    }
+
+    proc K::test_execute_help_and_unknown() -> UInt32 {
+        let ok = execute(CMD_HELP, 0);
+        let bad = execute(999, 0);
+
+        let t1 = expect_u32(ok, ERR_OK);
+        let t2 = expect_u32(bad, ERR_NOT_FOUND);
+        return combine(t1, t2);
+    }
+
+    proc K::test_execute_cd_error_path() -> UInt32 {
+        // CD with null path returns builtin-invalid path (code 4), not not-found.
+        let status = execute(CMD_CD, 0);
+        return expect_u32(status, 4);
+    }
+
     proc K::run_all_tests() -> UInt32 {
-        return 0;
+        let t1 = test_lookup_known_and_unknown();
+        let t2 = combine(t1, test_route_ps_and_edx());
+        let t3 = combine(t2, test_execute_help_and_unknown());
+        return combine(t3, test_execute_cd_error_path());
     }
 }

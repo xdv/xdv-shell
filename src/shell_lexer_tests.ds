@@ -1,10 +1,90 @@
 // File: shell_lexer_tests.ds - This file is part of XDV
 // Copyright (c) 2026 Dust LLC, and Contributors
 // Description:
-//   normalized test harness for parser compatibility.
+//   Deterministic lexer behavior tests.
 
 forge ShellLexerTests {
+    const TEST_PASS: UInt32 = 0;
+    const TEST_FAIL: UInt32 = 1;
+
+    const ERR_OK: UInt32 = 0;
+    const ERR_TOO_LONG: UInt32 = 3;
+
+    const TOKEN_WORD: UInt32 = 1;
+    const TOKEN_EOF: UInt32 = 0;
+
+    const PACK_LEN_FACTOR: UInt64 = 100000000000;
+
+    proc K::expect_u32(actual: UInt32, expected: UInt32) -> UInt32 {
+        if actual == expected {
+            return TEST_PASS;
+        } else {
+            return TEST_FAIL;
+        }
+    }
+
+    proc K::expect_u64(actual: UInt64, expected: UInt64) -> UInt32 {
+        if actual == expected {
+            return TEST_PASS;
+        } else {
+            return TEST_FAIL;
+        }
+    }
+
+    proc K::combine(lhs: UInt32, rhs: UInt32) -> UInt32 {
+        if lhs == TEST_PASS {
+            return rhs;
+        } else {
+            return TEST_FAIL;
+        }
+    }
+
+    proc K::make_packet(length: UInt64, signature: UInt64) -> UInt64 {
+        return (length * PACK_LEN_FACTOR) + signature;
+    }
+
+    proc K::test_tokenize_word() -> UInt32 {
+        let packet = make_packet(4, 235548985);
+        let token = tokenize(packet, 0);
+        return expect_u32(token, TOKEN_WORD);
+    }
+
+    proc K::test_tokenize_zero_is_eof() -> UInt32 {
+        let token = tokenize(0, 0);
+        return expect_u32(token, TOKEN_EOF);
+    }
+
+    proc K::test_init_too_long_rejected() -> UInt32 {
+        let packet = make_packet(65, 1);
+        let status = init(packet);
+        return expect_u32(status, ERR_TOO_LONG);
+    }
+
+    proc K::test_tokenize_too_long_is_eof() -> UInt32 {
+        let packet = make_packet(65, 1);
+        let token = tokenize(packet, 0);
+        return expect_u32(token, TOKEN_EOF);
+    }
+
+    proc K::test_peek_next_consistency() -> UInt32 {
+        let packet = make_packet(2, 13069);
+        let next = next_token(packet);
+        let peek = peek_token(packet);
+        let value = get_token_value(packet);
+
+        let t1 = expect_u32(next, TOKEN_WORD);
+        let t2 = expect_u32(peek, TOKEN_WORD);
+        let t3 = expect_u64(value, packet);
+
+        let u1 = combine(t1, t2);
+        return combine(u1, t3);
+    }
+
     proc K::run_all_tests() -> UInt32 {
-        return 0;
+        let t1 = test_tokenize_word();
+        let t2 = combine(t1, test_tokenize_zero_is_eof());
+        let t3 = combine(t2, test_init_too_long_rejected());
+        let t4 = combine(t3, test_tokenize_too_long_is_eof());
+        return combine(t4, test_peek_next_consistency());
     }
 }

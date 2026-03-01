@@ -1,10 +1,140 @@
 // File: shell_parser_tests.ds - This file is part of XDV
 // Copyright (c) 2026 Dust LLC, and Contributors
 // Description:
-//   normalized test harness for parser compatibility.
+//   Deterministic parser behavior tests.
 
 forge ShellParserTests {
+    const TEST_PASS: UInt32 = 0;
+    const TEST_FAIL: UInt32 = 1;
+
+    const ERR_OK: UInt32 = 0;
+    const ERR_SYNTAX: UInt32 = 1;
+    const ERR_PARSE: UInt32 = 2;
+
+    const CMD_CD: UInt64 = 1;
+    const CMD_LS: UInt64 = 2;
+    const CMD_CAT: UInt64 = 3;
+    const CMD_MKDIR: UInt64 = 4;
+    const CMD_RM: UInt64 = 5;
+    const CMD_ECHO: UInt64 = 6;
+    const CMD_PS: UInt64 = 7;
+    const CMD_HELP: UInt64 = 8;
+    const CMD_EXIT: UInt64 = 9;
+    const CMD_EDX: UInt64 = 10;
+
+    const SIG_CD: UInt64 = 13069;
+    const SIG_LS: UInt64 = 14263;
+    const SIG_CAT: UInt64 = 1711762;
+    const SIG_MKDIR: UInt64 = 32342767095;
+    const SIG_RM: UInt64 = 15043;
+    const SIG_ECHO: UInt64 = 228769865;
+    const SIG_PS: UInt64 = 14787;
+    const SIG_HELP: UInt64 = 235548985;
+    const SIG_EXIT: UInt64 = 229130382;
+    const SIG_EDX: UInt64 = 1746481;
+
+    proc K::expect_u32(actual: UInt32, expected: UInt32) -> UInt32 {
+        if actual == expected {
+            return TEST_PASS;
+        } else {
+            return TEST_FAIL;
+        }
+    }
+
+    proc K::expect_u64(actual: UInt64, expected: UInt64) -> UInt32 {
+        if actual == expected {
+            return TEST_PASS;
+        } else {
+            return TEST_FAIL;
+        }
+    }
+
+    proc K::combine(lhs: UInt32, rhs: UInt32) -> UInt32 {
+        if lhs == TEST_PASS {
+            return rhs;
+        } else {
+            return TEST_FAIL;
+        }
+    }
+
+    proc K::test_parse_known_commands() -> UInt32 {
+        let c1 = parse(pack_command_packet(SIG_CD, 2), 1);
+        let c2 = parse(pack_command_packet(SIG_LS, 2), 1);
+        let c3 = parse(pack_command_packet(SIG_CAT, 3), 1);
+        let c4 = parse(pack_command_packet(SIG_MKDIR, 5), 1);
+        let c5 = parse(pack_command_packet(SIG_RM, 2), 1);
+        let c6 = parse(pack_command_packet(SIG_ECHO, 4), 1);
+        let c7 = parse(pack_command_packet(SIG_PS, 2), 1);
+        let c8 = parse(pack_command_packet(SIG_HELP, 4), 1);
+        let c9 = parse(pack_command_packet(SIG_EXIT, 4), 1);
+        let c10 = parse(pack_command_packet(SIG_EDX, 3), 1);
+
+        let t1 = expect_u64(c1, CMD_CD);
+        let t2 = expect_u64(c2, CMD_LS);
+        let t3 = expect_u64(c3, CMD_CAT);
+        let t4 = expect_u64(c4, CMD_MKDIR);
+        let t5 = expect_u64(c5, CMD_RM);
+        let t6 = expect_u64(c6, CMD_ECHO);
+        let t7 = expect_u64(c7, CMD_PS);
+        let t8 = expect_u64(c8, CMD_HELP);
+        let t9 = expect_u64(c9, CMD_EXIT);
+        let t10 = expect_u64(c10, CMD_EDX);
+
+        let u1 = combine(t1, t2);
+        let u2 = combine(u1, t3);
+        let u3 = combine(u2, t4);
+        let u4 = combine(u3, t5);
+        let u5 = combine(u4, t6);
+        let u6 = combine(u5, t7);
+        let u7 = combine(u6, t8);
+        let u8 = combine(u7, t9);
+        return combine(u8, t10);
+    }
+
+    proc K::test_parse_unknown_command() -> UInt32 {
+        let parsed = parse(pack_command_packet(99999, 2), 1);
+        return expect_u64(parsed, 0);
+    }
+
+    proc K::test_parse_too_many_args_rejected() -> UInt32 {
+        let parsed = parse(pack_command_packet(SIG_HELP, 4), 17);
+        return expect_u64(parsed, 0);
+    }
+
+    proc K::test_pipeline_and_redirect_paths() -> UInt32 {
+        let pipeline_ok = parse_pipeline(pack_command_packet(SIG_HELP, 4));
+        let pipeline_bad = parse_pipeline(0);
+        let redirect_ok = parse_redirect(pack_command_packet(SIG_HELP, 4));
+        let redirect_bad = parse_redirect(0);
+
+        let t1 = expect_u32(pipeline_ok, ERR_OK);
+        let t2 = expect_u32(pipeline_bad, ERR_PARSE);
+        let t3 = expect_u32(redirect_ok, ERR_OK);
+        let t4 = expect_u32(redirect_bad, ERR_SYNTAX);
+
+        let u1 = combine(t1, t2);
+        let u2 = combine(u1, t3);
+        return combine(u2, t4);
+    }
+
+    proc K::test_legacy_command_id_compatibility() -> UInt32 {
+        let n1 = normalize_command(CMD_PS);
+        let n2 = normalize_command(CMD_EDX);
+        let n3 = normalize_command(777);
+
+        let t1 = expect_u64(n1, CMD_PS);
+        let t2 = expect_u64(n2, CMD_EDX);
+        let t3 = expect_u64(n3, 0);
+
+        let u1 = combine(t1, t2);
+        return combine(u1, t3);
+    }
+
     proc K::run_all_tests() -> UInt32 {
-        return 0;
+        let t1 = test_parse_known_commands();
+        let t2 = combine(t1, test_parse_unknown_command());
+        let t3 = combine(t2, test_parse_too_many_args_rejected());
+        let t4 = combine(t3, test_pipeline_and_redirect_paths());
+        return combine(t4, test_legacy_command_id_compatibility());
     }
 }

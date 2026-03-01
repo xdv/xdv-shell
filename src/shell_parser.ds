@@ -1,7 +1,7 @@
 // File: shell_parser.ds - This file is part of XDV
 // Copyright (c) 2026 Dust LLC, and Contributors
 // Description:
-//   Shell Parser - Command Parser
+//   Shell Parser - deterministic command packet parser.
 
 forge ShellParserErrors {
     const ERR_OK: UInt32 = 0;
@@ -27,6 +27,31 @@ forge ShellParser {
     const CMD_HELP: UInt64 = 8;
     const CMD_EXIT: UInt64 = 9;
     const CMD_EDX: UInt64 = 10;
+
+    const PACK_LEN_FACTOR: UInt64 = 100000000000;
+
+    const LEN_CD: UInt64 = 2;
+    const LEN_LS: UInt64 = 2;
+    const LEN_CAT: UInt64 = 3;
+    const LEN_MKDIR: UInt64 = 5;
+    const LEN_RM: UInt64 = 2;
+    const LEN_ECHO: UInt64 = 4;
+    const LEN_PS: UInt64 = 2;
+    const LEN_HELP: UInt64 = 4;
+    const LEN_EXIT: UInt64 = 4;
+    const LEN_EDX: UInt64 = 3;
+
+    // hash base 131 over lowercase ASCII command bytes.
+    const SIG_CD: UInt64 = 13069;
+    const SIG_LS: UInt64 = 14263;
+    const SIG_CAT: UInt64 = 1711762;
+    const SIG_MKDIR: UInt64 = 32342767095;
+    const SIG_RM: UInt64 = 15043;
+    const SIG_ECHO: UInt64 = 228769865;
+    const SIG_PS: UInt64 = 14787;
+    const SIG_HELP: UInt64 = 235548985;
+    const SIG_EXIT: UInt64 = 229130382;
+    const SIG_EDX: UInt64 = 1746481;
 
     proc K::init() -> UInt32 {
         return ERR_OK;
@@ -62,7 +87,12 @@ forge ShellParser {
         if commands == 0 {
             return ERR_PARSE;
         } else {
-            return ERR_OK;
+            let normalized = normalize_command(commands);
+            if normalized == 0 {
+                return ERR_PARSE;
+            } else {
+                return ERR_OK;
+            }
         }
     }
 
@@ -70,7 +100,12 @@ forge ShellParser {
         if cmd == 0 {
             return ERR_SYNTAX;
         } else {
-            return ERR_OK;
+            let normalized = normalize_command(cmd);
+            if normalized == 0 {
+                return ERR_SYNTAX;
+            } else {
+                return ERR_OK;
+            }
         }
     }
 
@@ -82,7 +117,92 @@ forge ShellParser {
         return CMD_HELP;
     }
 
+    proc K::pack_command_packet(signature: UInt64, length: UInt32) -> UInt64 {
+        if length == 0 {
+            return 0;
+        } else {
+            return (length * PACK_LEN_FACTOR) + signature;
+        }
+    }
+
+    proc K::packet_length(packet: UInt64) -> UInt64 {
+        if packet == 0 {
+            return 0;
+        } else {
+            return packet / PACK_LEN_FACTOR;
+        }
+    }
+
+    proc K::packet_signature(packet: UInt64, length: UInt32) -> UInt64 {
+        if length == 0 {
+            return 0;
+        } else {
+            return packet - (length * PACK_LEN_FACTOR);
+        }
+    }
+
+    proc K::normalize_command_signature(signature: UInt64, length: UInt32) -> UInt64 {
+        if length == LEN_CD {
+            if signature == SIG_CD {
+                return CMD_CD;
+            } else {
+                if signature == SIG_LS {
+                    return CMD_LS;
+                } else {
+                    if signature == SIG_RM {
+                        return CMD_RM;
+                    } else {
+                        if signature == SIG_PS {
+                            return CMD_PS;
+                        } else {
+                            return 0;
+                        }
+                    }
+                }
+            }
+        } else {
+            if length == LEN_CAT {
+                if signature == SIG_CAT {
+                    return CMD_CAT;
+                } else {
+                    if signature == SIG_EDX {
+                        return CMD_EDX;
+                    } else {
+                        return 0;
+                    }
+                }
+            } else {
+                if length == LEN_ECHO {
+                    if signature == SIG_ECHO {
+                        return CMD_ECHO;
+                    } else {
+                        if signature == SIG_HELP {
+                            return CMD_HELP;
+                        } else {
+                            if signature == SIG_EXIT {
+                                return CMD_EXIT;
+                            } else {
+                                return 0;
+                            }
+                        }
+                    }
+                } else {
+                    if length == LEN_MKDIR {
+                        if signature == SIG_MKDIR {
+                            return CMD_MKDIR;
+                        } else {
+                            return 0;
+                        }
+                    } else {
+                        return 0;
+                    }
+                }
+            }
+        }
+    }
+
     proc K::normalize_command(token: UInt64) -> UInt64 {
+        // Compatibility with legacy command-ID paths.
         if token == CMD_CD {
             return CMD_CD;
         } else {
@@ -113,7 +233,13 @@ forge ShellParser {
                                             if token == CMD_EDX {
                                                 return CMD_EDX;
                                             } else {
-                                                return 0;
+                                                let length = packet_length(token);
+                                                if length == 0 {
+                                                    return 0;
+                                                } else {
+                                                    let signature = packet_signature(token, length);
+                                                    return normalize_command_signature(signature, length);
+                                                }
                                             }
                                         }
                                     }

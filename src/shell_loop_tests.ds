@@ -1,10 +1,98 @@
 // File: shell_loop_tests.ds - This file is part of XDV
 // Copyright (c) 2026 Dust LLC, and Contributors
 // Description:
-//   normalized test harness for parser compatibility.
+//   Deterministic loop command-buffer and dispatch tests.
 
 forge ShellLoopTests {
+    const TEST_PASS: UInt32 = 0;
+    const TEST_FAIL: UInt32 = 1;
+
+    const RUNNING: UInt32 = 1;
+
+    const CMD_NONE: UInt64 = 0;
+    const CMD_HELP: UInt64 = 8;
+    const CMD_UNKNOWN: UInt64 = 255;
+    const CMD_TOO_LONG: UInt64 = 254;
+
+    const ERR_PARSE: UInt32 = 2;
+
+    const ASCII_C_UPPER: UInt32 = 67;
+    const ASCII_C_LOWER: UInt32 = 99;
+    const ASCII_ZERO: UInt32 = 48;
+
+    const SIG_HELP: UInt64 = 235548985;
+
+    proc K::expect_u32(actual: UInt32, expected: UInt32) -> UInt32 {
+        if actual == expected {
+            return TEST_PASS;
+        } else {
+            return TEST_FAIL;
+        }
+    }
+
+    proc K::expect_u64(actual: UInt64, expected: UInt64) -> UInt32 {
+        if actual == expected {
+            return TEST_PASS;
+        } else {
+            return TEST_FAIL;
+        }
+    }
+
+    proc K::combine(lhs: UInt32, rhs: UInt32) -> UInt32 {
+        if lhs == TEST_PASS {
+            return rhs;
+        } else {
+            return TEST_FAIL;
+        }
+    }
+
+    proc K::test_normalize_command_char() -> UInt32 {
+        let lower = normalize_command_char(ASCII_C_UPPER);
+        let invalid = normalize_command_char(ASCII_ZERO);
+
+        let t1 = expect_u32(lower, ASCII_C_LOWER);
+        let t2 = expect_u32(invalid, 0);
+        return combine(t1, t2);
+    }
+
+    proc K::test_command_packet_resolution() -> UInt32 {
+        let packet = pack_command_packet(SIG_HELP, 4);
+        let parsed = resolve_packet_command(packet);
+        return expect_u64(parsed, CMD_HELP);
+    }
+
+    proc K::test_unknown_packet_resolution() -> UInt32 {
+        let packet = pack_command_packet(12345, 2);
+        let parsed = resolve_packet_command(packet);
+        return expect_u64(parsed, CMD_NONE);
+    }
+
+    proc K::test_dispatch_error_path() -> UInt32 {
+        let status = dispatch_command(CMD_NONE, 0);
+        return expect_u32(status, ERR_PARSE);
+    }
+
+    proc K::test_process_line_paths() -> UInt32 {
+        let empty = process_line(CMD_NONE);
+        let unknown = process_line(CMD_UNKNOWN);
+        let too_long = process_line(CMD_TOO_LONG);
+        let help = process_line(pack_command_packet(SIG_HELP, 4));
+
+        let t1 = expect_u32(empty, RUNNING);
+        let t2 = expect_u32(unknown, RUNNING);
+        let t3 = expect_u32(too_long, RUNNING);
+        let t4 = expect_u32(help, RUNNING);
+
+        let u1 = combine(t1, t2);
+        let u2 = combine(u1, t3);
+        return combine(u2, t4);
+    }
+
     proc K::run_all_tests() -> UInt32 {
-        return 0;
+        let t1 = test_normalize_command_char();
+        let t2 = combine(t1, test_command_packet_resolution());
+        let t3 = combine(t2, test_unknown_packet_resolution());
+        let t4 = combine(t3, test_dispatch_error_path());
+        return combine(t4, test_process_line_paths());
     }
 }

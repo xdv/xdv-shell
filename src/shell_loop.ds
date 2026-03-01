@@ -1,7 +1,7 @@
 // File: shell_loop.ds - This file is part of XDV
 // Copyright (c) 2026 Dust LLC, and Contributors
 // Description:
-//   Shell Loop - Main Shell Loop
+//   Shell Loop - deterministic command buffer and dispatch.
 
 forge ShellLoopErrors {
     const ERR_OK: UInt32 = 0;
@@ -9,16 +9,18 @@ forge ShellLoopErrors {
     const ERR_PARSE: UInt32 = 2;
     const ERR_EXECUTE: UInt32 = 3;
     const ERR_UNKNOWN_COMMAND: UInt32 = 4;
+    const ERR_LEX: UInt32 = 5;
     const ERR_DOMAIN_NOT_AVAILABLE: UInt32 = 100;
 }
 
 forge ShellLoop {
 
     const MAX_LINE: UInt32 = 256;
+    const MAX_CYCLES: UInt32 = 4096;
+    const MAX_CMD_CHARS: UInt32 = 16;
+
     const RUNNING: UInt32 = 1;
     const STOPPED: UInt32 = 0;
-
-    const MAX_CYCLES: UInt32 = 4096;
 
     const CMD_NONE: UInt64 = 0;
     const CMD_CD: UInt64 = 1;
@@ -31,36 +33,28 @@ forge ShellLoop {
     const CMD_HELP: UInt64 = 8;
     const CMD_EXIT: UInt64 = 9;
     const CMD_EDX: UInt64 = 10;
+
     const CMD_UNKNOWN: UInt64 = 255;
+    const CMD_TOO_LONG: UInt64 = 254;
 
-    const ASCII_NUL: UInt32 = 0;
-    const ASCII_LF: UInt32 = 10;
-    const ASCII_CR: UInt32 = 13;
-    const ASCII_C: UInt32 = 99;
-    const ASCII_D: UInt32 = 100;
-    const ASCII_A: UInt32 = 97;
-    const ASCII_L: UInt32 = 108;
-    const ASCII_M: UInt32 = 109;
-    const ASCII_R: UInt32 = 114;
-    const ASCII_E: UInt32 = 101;
-    const ASCII_X: UInt32 = 120;
-    const ASCII_P: UInt32 = 112;
-    const ASCII_H: UInt32 = 104;
-    const ASCII_I: UInt32 = 105;
-
-    const ASCII_C_UPPER: UInt32 = 67;
-    const ASCII_D_UPPER: UInt32 = 68;
-    const ASCII_A_UPPER: UInt32 = 65;
-    const ASCII_L_UPPER: UInt32 = 76;
-    const ASCII_M_UPPER: UInt32 = 77;
-    const ASCII_R_UPPER: UInt32 = 82;
-    const ASCII_E_UPPER: UInt32 = 69;
-    const ASCII_X_UPPER: UInt32 = 88;
-    const ASCII_P_UPPER: UInt32 = 80;
-    const ASCII_H_UPPER: UInt32 = 72;
-    const ASCII_I_UPPER: UInt32 = 73;
+    const TOKEN_EOF: UInt32 = 0;
 
     const EXEC_ERR_NOT_FOUND: UInt32 = 1;
+
+    const PACK_LEN_FACTOR: UInt64 = 100000000000;
+    const HASH_BASE: UInt64 = 131;
+
+    const ASCII_NUL: UInt32 = 0;
+    const ASCII_TAB: UInt32 = 9;
+    const ASCII_LF: UInt32 = 10;
+    const ASCII_CR: UInt32 = 13;
+    const ASCII_SPACE: UInt32 = 32;
+
+    const ASCII_A_LOWER: UInt32 = 97;
+    const ASCII_Z_LOWER: UInt32 = 122;
+    const ASCII_A_UPPER: UInt32 = 65;
+    const ASCII_Z_UPPER: UInt32 = 90;
+    const ASCII_CASE_DELTA: UInt32 = 32;
 
     proc K::run_loop() -> UInt32 {
         emit "xdv-shell: interactive loop ready";
@@ -72,8 +66,8 @@ forge ShellLoop {
             return ERR_OK;
         } else {
             render_prompt();
-            let command_code = read_command_code();
-            let state = process_line(command_code);
+            let packet = read_command_packet();
+            let state = process_line(packet);
             if state == STOPPED {
                 return ERR_OK;
             } else {
@@ -81,28 +75,27 @@ forge ShellLoop {
             }
         }
     }
-    
-    proc K::process_line(line: UInt64) -> UInt32 {
-        if line == CMD_NONE {
+
+    proc K::process_line(packet: UInt64) -> UInt32 {
+        if packet == CMD_NONE {
             return RUNNING;
         } else {
-            if line == CMD_UNKNOWN {
-                print_error(0);
+            if packet == CMD_UNKNOWN {
+                print_error_unknown();
                 return RUNNING;
             } else {
-                let lex_result = tokenize(line, 0);
-                if lex_result == ASCII_NUL {
-                    print_error(0);
+                if packet == CMD_TOO_LONG {
+                    print_error_too_long();
                     return RUNNING;
                 } else {
-                    let parsed = parse(line, 1);
+                    let parsed = resolve_packet_command(packet);
                     if parsed == CMD_NONE {
-                        print_error(0);
+                        print_error_unknown();
                         return RUNNING;
                     } else {
-                        let exec_result = execute(parsed, 0);
+                        let exec_result = dispatch_command(parsed, 0);
                         if exec_result == EXEC_ERR_NOT_FOUND {
-                            print_error(0);
+                            print_error_unknown();
                             return RUNNING;
                         } else {
                             if parsed == CMD_EXIT {
@@ -115,6 +108,24 @@ forge ShellLoop {
                     }
                 }
             }
+        }
+    }
+
+    // Deterministic decode path: command packet -> lexer gate -> parser result.
+    proc K::resolve_packet_command(packet: UInt64) -> UInt64 {
+        let lex_result = tokenize(packet, 0);
+        if lex_result == TOKEN_EOF {
+            return CMD_NONE;
+        } else {
+            return parse(packet, 1);
+        }
+    }
+
+    proc K::dispatch_command(command: UInt64, args: UInt64) -> UInt32 {
+        if command == CMD_NONE {
+            return ERR_PARSE;
+        } else {
+            return execute(command, args);
         }
     }
 
@@ -134,166 +145,116 @@ forge ShellLoop {
         return ERR_UNKNOWN_COMMAND;
     }
 
-    proc K::read_command_code() -> UInt64 {
-        let first = getchar();
-        if first == ASCII_NUL {
+    proc K::print_error_unknown() -> UInt32 {
+        return print_error(0);
+    }
+
+    proc K::print_error_too_long() -> UInt32 {
+        emit "xdv-shell: command too long";
+        putchar(10);
+        return ERR_READ_LINE;
+    }
+
+    proc K::normalize_command_char(ch: UInt32) -> UInt32 {
+        if ch < ASCII_A_UPPER {
+            return 0;
+        } else {
+            if ch <= ASCII_Z_UPPER {
+                return ch + ASCII_CASE_DELTA;
+            } else {
+                if ch < ASCII_A_LOWER {
+                    return 0;
+                } else {
+                    if ch <= ASCII_Z_LOWER {
+                        return ch;
+                    } else {
+                        return 0;
+                    }
+                }
+            }
+        }
+    }
+
+    proc K::hash_step(signature: UInt64, normalized_char: UInt32) -> UInt64 {
+        return (signature * HASH_BASE) + normalized_char;
+    }
+
+    proc K::pack_command_packet(signature: UInt64, length: UInt32) -> UInt64 {
+        if length == 0 {
             return CMD_NONE;
         } else {
-            if first == ASCII_LF {
+            return (length * PACK_LEN_FACTOR) + signature;
+        }
+    }
+
+    proc K::read_command_packet() -> UInt64 {
+        return read_command_packet_state(0, 0, 0);
+    }
+
+    // done_reading_command:
+    //   0 -> still reading command token
+    //   1 -> command token finalized, consume remaining input until newline
+    proc K::read_command_packet_state(signature: UInt64, length: UInt32, done_reading_command: UInt32) -> UInt64 {
+        let ch = getchar();
+        if ch == ASCII_NUL {
+            if length == 0 {
                 return CMD_NONE;
             } else {
-                if first == ASCII_CR {
+                return pack_command_packet(signature, length);
+            }
+        } else {
+            if ch == ASCII_LF {
+                if length == 0 {
                     return CMD_NONE;
                 } else {
-                    if first == ASCII_C {
-                        return decode_c_command();
+                    return pack_command_packet(signature, length);
+                }
+            } else {
+                if ch == ASCII_CR {
+                    if length == 0 {
+                        return CMD_NONE;
                     } else {
-                        if first == ASCII_C_UPPER {
-                            return decode_c_command();
+                        return pack_command_packet(signature, length);
+                    }
+                } else {
+                    if ch == ASCII_SPACE {
+                        if done_reading_command == 1 {
+                            return read_command_packet_state(signature, length, 1);
                         } else {
-                            if first == ASCII_L {
-                                consume_line();
-                                return CMD_LS;
+                            if length == 0 {
+                                return read_command_packet_state(signature, 0, 0);
                             } else {
-                                if first == ASCII_L_UPPER {
-                                    consume_line();
-                                    return CMD_LS;
-                                } else {
-                                    if first == ASCII_M {
-                                        consume_line();
-                                        return CMD_MKDIR;
-                                    } else {
-                                        if first == ASCII_M_UPPER {
-                                            consume_line();
-                                            return CMD_MKDIR;
-                                        } else {
-                                            if first == ASCII_R {
-                                                consume_line();
-                                                return CMD_RM;
-                                            } else {
-                                                if first == ASCII_R_UPPER {
-                                                    consume_line();
-                                                    return CMD_RM;
-                                                } else {
-                                                    if first == ASCII_E {
-                                                        return decode_e_command();
-                                                    } else {
-                                                        if first == ASCII_E_UPPER {
-                                                            return decode_e_command();
-                                                        } else {
-                                                            if first == ASCII_P {
-                                                                consume_line();
-                                                                return CMD_PS;
-                                                            } else {
-                                                                if first == ASCII_P_UPPER {
-                                                                    consume_line();
-                                                                    return CMD_PS;
-                                                                } else {
-                                                                    if first == ASCII_H {
-                                                                        consume_line();
-                                                                        return CMD_HELP;
-                                                                    } else {
-                                                                        if first == ASCII_H_UPPER {
-                                                                            consume_line();
-                                                                            return CMD_HELP;
-                                                                        } else {
-                                                                            consume_line();
-                                                                            return CMD_UNKNOWN;
-                                                                        }
-                                                                    }
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
+                                return read_command_packet_state(signature, length, 1);
                             }
                         }
-                    }
-                }
-            }
-        }
-    }
-
-    proc K::decode_c_command() -> UInt64 {
-        let second = getchar();
-        if second == ASCII_D {
-            consume_line();
-            return CMD_CD;
-        } else {
-            if second == ASCII_D_UPPER {
-                consume_line();
-                return CMD_CD;
-            } else {
-                if second == ASCII_A {
-                    consume_line();
-                    return CMD_CAT;
-                } else {
-                    if second == ASCII_A_UPPER {
-                        consume_line();
-                        return CMD_CAT;
                     } else {
-                        consume_line();
-                        return CMD_UNKNOWN;
-                    }
-                }
-            }
-        }
-    }
-
-    proc K::decode_e_command() -> UInt64 {
-        let second = getchar();
-        if second == ASCII_C {
-            consume_line();
-            return CMD_ECHO;
-        } else {
-            if second == ASCII_C_UPPER {
-                consume_line();
-                return CMD_ECHO;
-            } else {
-                if second == ASCII_X {
-                    consume_line();
-                    return CMD_EXIT;
-                } else {
-                    if second == ASCII_X_UPPER {
-                        consume_line();
-                        return CMD_EXIT;
-                    } else {
-                        if second == ASCII_D {
-                            let third = getchar();
-                            if third == ASCII_X {
-                                consume_line();
-                                return CMD_EDX;
+                        if ch == ASCII_TAB {
+                            if done_reading_command == 1 {
+                                return read_command_packet_state(signature, length, 1);
                             } else {
-                                if third == ASCII_X_UPPER {
-                                    consume_line();
-                                    return CMD_EDX;
+                                if length == 0 {
+                                    return read_command_packet_state(signature, 0, 0);
                                 } else {
-                                    consume_line();
-                                    return CMD_UNKNOWN;
+                                    return read_command_packet_state(signature, length, 1);
                                 }
                             }
                         } else {
-                            if second == ASCII_D_UPPER {
-                                let third_u = getchar();
-                                if third_u == ASCII_X {
+                            if done_reading_command == 1 {
+                                return read_command_packet_state(signature, length, 1);
+                            } else {
+                                let normalized = normalize_command_char(ch);
+                                if normalized == 0 {
                                     consume_line();
-                                    return CMD_EDX;
+                                    return CMD_UNKNOWN;
                                 } else {
-                                    if third_u == ASCII_X_UPPER {
-                                        consume_line();
-                                        return CMD_EDX;
+                                    if length < MAX_CMD_CHARS {
+                                        let next_signature = hash_step(signature, normalized);
+                                        return read_command_packet_state(next_signature, length + 1, 0);
                                     } else {
                                         consume_line();
-                                        return CMD_UNKNOWN;
+                                        return CMD_TOO_LONG;
                                     }
                                 }
-                            } else {
-                                consume_line();
-                                return CMD_UNKNOWN;
                             }
                         }
                     }
@@ -319,6 +280,3 @@ forge ShellLoop {
         }
     }
 }
-
-
-

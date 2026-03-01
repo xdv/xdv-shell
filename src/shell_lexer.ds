@@ -1,7 +1,7 @@
 // File: shell_lexer.ds - This file is part of XDV
 // Copyright (c) 2026 Dust LLC, and Contributors
 // Description:
-//   Shell Lexer - Tokenizer
+//   Shell Lexer - deterministic packet lexer for command words.
 
 forge ShellLexerErrors {
     const ERR_OK: UInt32 = 0;
@@ -20,51 +20,53 @@ forge ShellLexer {
     const TOKEN_REDIR_APPEND: UInt32 = 5;
     const TOKEN_EOF: UInt32 = 0;
 
-    const ASCII_PIPE: UInt64 = 124;
-    const ASCII_REDIR_IN: UInt64 = 60;
-    const ASCII_REDIR_OUT: UInt64 = 62;
+    const PACK_LEN_FACTOR: UInt64 = 100000000000;
+    const MAX_TOKEN_LEN: UInt64 = 64;
 
-    const MAX_TOKEN_LEN: UInt32 = 64;
-    const MAX_TOKENS: UInt32 = 32;
-
-    proc K::init(input: UInt64) -> UInt32 {
-        if input == 0 {
-            return ERR_EOF;
+    proc K::packet_length(packet: UInt64) -> UInt64 {
+        if packet == 0 {
+            return 0;
         } else {
-            return ERR_OK;
+            return packet / PACK_LEN_FACTOR;
         }
     }
 
-    proc K::classify_token_value(value: UInt64) -> UInt32 {
-        if value == 0 {
-            return TOKEN_EOF;
+    proc K::init(input: UInt64) -> UInt32 {
+        let length = packet_length(input);
+        if length == 0 {
+            return ERR_EOF;
         } else {
-            if value == ASCII_PIPE {
-                return TOKEN_PIPE;
+            if length > MAX_TOKEN_LEN {
+                return ERR_TOO_LONG;
             } else {
-                if value == ASCII_REDIR_IN {
-                    return TOKEN_REDIR_IN;
-                } else {
-                    if value == ASCII_REDIR_OUT {
-                        return TOKEN_REDIR_OUT;
-                    } else {
-                        return TOKEN_WORD;
-                    }
-                }
+                return ERR_OK;
             }
         }
     }
 
-    proc K::next_token() -> UInt32 {
-        return TOKEN_EOF;
+    proc K::classify_token_value(value: UInt64) -> UInt32 {
+        let length = packet_length(value);
+        if length == 0 {
+            return TOKEN_EOF;
+        } else {
+            if length > MAX_TOKEN_LEN {
+                return TOKEN_EOF;
+            } else {
+                return TOKEN_WORD;
+            }
+        }
     }
 
-    proc K::get_token_value() -> UInt64 {
-        return MAX_TOKENS;
+    proc K::next_token(input: UInt64) -> UInt32 {
+        return classify_token_value(input);
     }
 
-    proc K::peek_token() -> UInt32 {
-        return next_token();
+    proc K::get_token_value(input: UInt64) -> UInt64 {
+        return input;
+    }
+
+    proc K::peek_token(input: UInt64) -> UInt32 {
+        return next_token(input);
     }
 
     proc K::reset() -> UInt32 {
@@ -76,7 +78,7 @@ forge ShellLexer {
         if init_result == ERR_OK {
             return classify_token_value(input);
         } else {
-            return init_result;
+            return TOKEN_EOF;
         }
     }
 }
